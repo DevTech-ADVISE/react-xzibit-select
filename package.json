@@ -1,6 +1,6 @@
 {
   "name": "react-xzibit-select",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "react-xzibit-select",
   "scripts": {
     "test": "./node_modules/.bin/jsxhint lib/ spec/ && ./node_modules/.bin/jshint lib/ spec/ && ./node_modules/karma/bin/karma start karma.conf.js",

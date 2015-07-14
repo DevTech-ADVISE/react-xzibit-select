@@ -6,7 +6,7 @@ var TagList = require("react-tag-list");
 
 require("./react-xzibit-select.scss");
 
-module.exports = React.createClass({
+var XzibitSelect = React.createClass({
 	getInitialState: function() {
 		return {
 			labelFilter: '',
@@ -125,6 +125,7 @@ module.exports = React.createClass({
 				groupByKey = dim.groupByKey;
 
 			return (<ReactCompactMultiselect 
+						key={dim.name}
 						label={dim.name} 
 						options={dim.options} 
 						initialValue={[]}
@@ -171,3 +172,5 @@ module.exports = React.createClass({
 		);
 	}
 });
+
+module.exports = XzibitSelect;
