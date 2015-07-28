@@ -9,7 +9,8 @@ module.exports = React.createClass({
   	value: types.any,
   	onClick: types.func,
     addAll: types.bool,
-    tooltipContent: types.string
+    tooltipContent: types.string,
+    customOptionTag: types.string //can be html in string form
   },
   handleClick: function(){
   	this.props.onClick(this.props.value);
@@ -26,7 +27,7 @@ module.exports = React.createClass({
     component.tooltip = new Opentip(React.findDOMNode(component), tooltipContent, {delay: 0});
   },
   render: function() {
-    var className = "rxs-option-list-item", hoverIcon = "";
+    var className = "rxs-option-list-item", hoverIcon = "", customOptionTag = "";
     if(this.props.addAll)
       className += " add-all";
     if(this.props.tooltipContent && this.props.tooltipContent !== "") {
@@ -34,6 +35,11 @@ module.exports = React.createClass({
         <div className="hover-icon" ref={this.createTooltip.bind(this, this.props.tooltipContent)}>i</div>
       );
     }
-    return <div className={className}><button className="rxs-option-button" onClick={this.handleClick}>{this.props.label}{hoverIcon}</button></div>;
+    if(this.props.customOptionTag && this.props.customOptionTag !== "") {
+      customOptionTag = (
+        <div className="custom-option-tag" dangerouslySetInnerHTML={{__html: this.props.customOptionTag}}></div>
+      );
+    }
+    return <div className={className}><button className="rxs-option-button" onClick={this.handleClick}>{this.props.label}{customOptionTag}{hoverIcon}</button></div>;
   }
 });

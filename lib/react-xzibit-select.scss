@@ -47,6 +47,10 @@ html, body, #main {height:100%;margin:0;}
 
 	.react-tag-list {border-bottom: 3px double #ccc;}
 	
+	.custom-option-tag {
+		display: inline;
+		margin-left: 10px;
+	}
 	.react-compact-multiselect {
 		float: left;
 		margin-bottom: 6px;

@@ -13,9 +13,17 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		var optionItems = this.props.options.map(function(opt){
-			var tooltipContent = "";
+			var tooltipContent = "", customOptionTag = "";
 			if(opt.tooltipContent) tooltipContent = String(opt.tooltipContent);
-			return (<OptionListItem onClick={this.props.onClick} value={opt.value} label={opt.label} tooltipContent={tooltipContent}/>);
+			if(opt.customOptionTag) customOptionTag = String(opt.customOptionTag);
+			return (
+				<OptionListItem 
+					onClick={this.props.onClick} 
+					value={opt.value} 
+					label={opt.label} 
+					tooltipContent={tooltipContent}
+					customOptionTag={customOptionTag} />
+			);
 		}.bind(this));
 
 		if (optionItems.length === 0)
