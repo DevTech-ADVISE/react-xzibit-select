@@ -13,9 +13,9 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		var optionItems = this.props.options.map(function(opt){
-			var hoverInfo = "";
-			if(opt.hoverInfo) hoverInfo = String(opt.hoverInfo);
-			return (<OptionListItem onClick={this.props.onClick} value={opt.value} label={opt.label} hoverInfo={hoverInfo}/>);
+			var tooltipContent = "";
+			if(opt.tooltipContent) tooltipContent = String(opt.tooltipContent);
+			return (<OptionListItem onClick={this.props.onClick} value={opt.value} label={opt.label} tooltipContent={tooltipContent}/>);
 		}.bind(this));
 
 		if (optionItems.length === 0)
