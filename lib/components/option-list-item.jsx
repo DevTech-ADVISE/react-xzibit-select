@@ -10,7 +10,8 @@ module.exports = React.createClass({
   	onClick: types.func,
     addAll: types.bool,
     tooltipContent: types.string,
-    customOptionTag: types.string //can be html in string form
+    customOptionTag: types.string, //can be html in string form
+    tagTipContent: types.string //tool tip content for the custom option tag
   },
   handleClick: function(){
   	this.props.onClick(this.props.value);
@@ -37,7 +38,7 @@ module.exports = React.createClass({
     }
     if(this.props.customOptionTag && this.props.customOptionTag !== "") {
       customOptionTag = (
-        <div className="custom-option-tag" dangerouslySetInnerHTML={{__html: this.props.customOptionTag}}></div>
+        <div className="custom-option-tag" ref={this.createTooltip.bind(this, this.props.tagTipContent)} dangerouslySetInnerHTML={{__html: this.props.customOptionTag}}></div>
       );
     }
     return <div className={className}><button className="rxs-option-button" onClick={this.handleClick}>{this.props.label}{customOptionTag}{hoverIcon}</button></div>;
