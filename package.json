@@ -36,6 +36,7 @@
     "react-compact-multiselect": "git+https://github.com/BI/react-compact-multiselect",
     "react-lazy-render": "git+https://github.com/BI/react-lazy-render",
     "react-sizebox": "git+https://github.com/BI/react-sizebox",
+    "react-skylight": "^0.2.0",
     "react-tag-list": "git+https://github.com/BI/react-tag-list"
   }
 }
