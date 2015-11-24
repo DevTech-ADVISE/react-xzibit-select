@@ -1,8 +1,7 @@
 var React = require("react/addons");
 var Opentip = require('opentip');
-var SkyLight = require('react-skylight');
-var IsMobileMixin = require('../mixins/IsMobileMixin.jsx');
 var classes = require("classnames");
+var IsMobileMixin = require('react-ismobile-mixin');
 require('opentip/css/opentip.css');
 
 var OptionListItem = React.createClass({
@@ -15,23 +14,6 @@ var OptionListItem = React.createClass({
   //   toolTipTitle: types.string,
   //   openTipOptions: types.object
   // },
-  getDefaultProps: function() {
-    return {
-      openTipOptions: {
-        offset: [3, 10],
-        borderRadius: 2,
-        borderColor: '#333333',
-        background: '#333333',
-        className: 'rxs-tooltip',
-        delay: 0,
-        hideDelay: 0,
-        showEffectDuration: 0,
-        hideEffectDuration: 0,
-        tipJoint: "top left",
-        stem: false
-      }
-    };
-  },
   mixins: [IsMobileMixin],
   handleClick: function(){
     this.props.onClick(this.props.value);
@@ -53,13 +35,15 @@ var OptionListItem = React.createClass({
       }
     }
   },
-  onClick: function(event) {
+  openSkylight: function(event) {
     //Show tooltip only on mobile
     if(!this.isMobile()) {
       return;
     }
 
-    this.refs.tooltip.show();
+    var tooltip = <div dangerouslySetInnerHTML={{__html: this.props.toolTipContent}} />
+
+    this.props.onMobileTooltip(this.props.title, tooltip);
 
     event.preventDefault();
     event.stopPropagation();
@@ -72,22 +56,11 @@ var OptionListItem = React.createClass({
       hoverIcon = (
         <div
           className="hover-icon"
-          onClick={this.onClick}
+          onClick={this.openSkylight}
           ref={this.createTooltip}>
           i
         </div>
       );
-
-      if(this.isMobile()) {
-        skyLight = (
-          <SkyLight
-            ref="tooltip"
-            title={this.props.tooltipTitle}
-            className="mobile-tooltip">
-            <div dangerouslySetInnerHTML={{__html: this.props.toolTipContent}} />
-          </SkyLight>
-        );
-      }
     }
 
     var className = classes("rxs-option-list-item", this.props.className, {"add-all": this.props.addAll});
@@ -102,7 +75,6 @@ var OptionListItem = React.createClass({
           {this.props.label}
           {hoverIcon}
         </div>
-        {skyLight}
       </div>
     );
   }

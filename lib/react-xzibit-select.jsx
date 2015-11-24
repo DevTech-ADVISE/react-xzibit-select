@@ -3,6 +3,8 @@ var types = React.PropTypes;
 var OptionList = require("./components/option-list.jsx");
 var ReactCompactMultiselect = require("react-compact-multiselect");
 var TagList = require("react-tag-list");
+var SkyLight = require('react-skylight');
+var IsMobileMixin = require('react-ismobile-mixin');
 
 require("./react-xzibit-select.scss");
 
@@ -10,7 +12,9 @@ var XzibitSelect = React.createClass({
 	getInitialState: function() {
 		return {
 			labelFilter: '',
-			dimensionFilter: {}
+			dimensionFilter: {},
+			mobileTooltipContent: null,
+			mobileTooltipTitle: null
 		};
 	},
 	propTypes: {
@@ -22,10 +26,24 @@ var XzibitSelect = React.createClass({
 		addAll: types.bool,
 		addAllLimit: types.number
 	},
+	mixins: [IsMobileMixin],
 	getDefaultProps: function() {
 		return {
 			addAll: true,
 			placeholderText: "Choose a value below or type to filter options",
+      openTipOptions: {
+        offset: [3, 10],
+        borderRadius: 2,
+        borderColor: '#333333',
+        background: '#333333',
+        className: 'rxs-tooltip',
+        delay: 0,
+        hideDelay: 0,
+        showEffectDuration: 0,
+        hideEffectDuration: 0,
+        tipJoint: "top left",
+        stem: false
+      }
 		};
 	},
 	removeValue: function(valToRemove) {
@@ -53,6 +71,16 @@ var XzibitSelect = React.createClass({
 			return (opt.label.toLowerCase().indexOf(this.state.labelFilter.toLowerCase()) > -1);
 			
 		}, this);
+	},
+	onMobileTooltip: function(title, content) {
+		if(!this.isMobile()) {
+			return;
+		}
+
+		var skylight = this.refs.tooltip;
+
+		this.setState({mobileTooltipTitle: title, mobileTooltipContent: content},
+			this.refs.tooltip.show)
 	},
 	dimensionFilterIncludes: function(opt) {
 		
@@ -149,9 +177,23 @@ var XzibitSelect = React.createClass({
 						onChange={this.generateUpdateDimensionFilter(dim.name)}
 						layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
 		}, this);
+
 		var addAll = this.props.addAll;
-		if(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit) 
+		if(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit) {
 			addAll=false;
+		}
+
+		var skylight = null;
+    if(this.isMobile()) {
+      skylight = (
+        <SkyLight
+          ref="tooltip"
+          title={this.state.mobileTooltipTitle}
+          className="mobile-tooltip">
+          {this.state.mobileTooltipContent}
+        </SkyLight>
+      );
+    }
 
 		return (
 			<div className="react-xzibit-select">
@@ -176,13 +218,15 @@ var XzibitSelect = React.createClass({
 						options={filteredOptions} 
 						onClick={this.addValue}
 						addAll={addAll}
-						addAllFunc={this.addAllFunc} />
+						addAllFunc={this.addAllFunc}
+						onMobileTooltip={this.onMobileTooltip}/>
 					<div className="footer">
 						<div className="filter-multiselect">
 						{selectFilters}
 						</div>
 					</div>
 				</div>
+				{skylight}
 			</div>
 		);
 	}

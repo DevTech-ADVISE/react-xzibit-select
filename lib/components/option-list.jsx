@@ -14,7 +14,14 @@ var OptionList = React.createClass({
 	},
 	buildOption: function(opt, index){
 		if(opt.addAll) {
-			return <OptionListItem key="Add All" addAll={this.props.addAll} onClick={this.props.addAllFunc} value={"Add All"} label="Add All" />;
+			return (
+				<OptionListItem
+					key="Add All"
+					addAll={this.props.addAll}
+					onClick={this.props.addAllFunc}
+					value={"Add All"}
+					label="Add All" />
+			);
 		}
 
 		var toolTipContent = "", toolTipTitle = "", label;
@@ -35,7 +42,8 @@ var OptionList = React.createClass({
 				value={opt.value} 
 				label={label} 
 				toolTipContent={toolTipContent}
-				toolTipTitle={toolTipTitle}/>
+				toolTipTitle={toolTipTitle}
+				onMobileTooltip={this.props.onMobileTooltip}/>
 		);
 
 	},
