@@ -30,7 +30,7 @@ var XzibitSelect = React.createClass({
 	getDefaultProps: function() {
 		return {
 			addAll: true,
-			placeholderText: "Choose a value below or type to filter options",
+			placeholderText: "Type here to filter options",
       openTipOptions: {
         offset: [3, 10],
         borderRadius: 2,
@@ -211,6 +211,7 @@ var XzibitSelect = React.createClass({
 							values={this.tagListValues()} 
 							onRemove={this.removeValue}
 							removeAll={this.removeAll}
+							placeholderText="&nbsp;"
 							collapsedRows={1} />
 					</div>
 					<OptionList 
