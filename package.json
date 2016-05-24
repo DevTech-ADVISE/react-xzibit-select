@@ -23,6 +23,7 @@
     "karma-jasmine": "^0.3.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-webpack": "^1.5.0",
+    "react": "^15.1.0",
     "sass-loader": "^0.4.0-beta",
     "style-loader": "^0.8.3",
     "webpack": "^1.5.3",
@@ -33,12 +34,15 @@
     "jquery": "^2.1.4",
     "lodash": "^3.8.0",
     "opentip": "git://github.com/enyo/opentip",
-    "react": "~0.13.3",
     "react-compact-multiselect": "git+https://github.com/BI/react-compact-multiselect",
     "react-ismobile-mixin": "git://github.com/BI/react-ismobile-mixin",
     "react-lazy-render": "git+https://github.com/BI/react-lazy-render",
     "react-sizebox": "git+https://github.com/BI/react-sizebox",
-    "react-skylight": "^0.2.0",
+    "react-skylight": "^0.4.0",
     "react-tag-list": "git+https://github.com/BI/react-tag-list"
+  },
+  "peerDependencies": {
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
   }
 }

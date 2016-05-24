@@ -1,4 +1,4 @@
-var React = require("react/addons");
+var React = require("react");
 var types = React.PropTypes;
 var OptionListItem = require("./option-list-item.jsx");
 var LazyRender = require("react-lazy-render");

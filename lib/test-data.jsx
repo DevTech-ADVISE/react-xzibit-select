@@ -1,4 +1,4 @@
-var React = require("react/addons");
+var React = require("react");
 var BananaElement = (<div>Banana<div className="custom-option-tag"><span>Yummy</span></div></div>);
 
 module.exports = {

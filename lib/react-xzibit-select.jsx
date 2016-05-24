@@ -1,4 +1,4 @@
-var React = require("react/addons");
+var React = require("react");
 var types = React.PropTypes;
 var OptionList = require("./components/option-list.jsx");
 var ReactCompactMultiselect = require("react-compact-multiselect");

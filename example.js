@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var XzibitSelect = require('./lib/react-xzibit-select.jsx');
 var testData = require("./lib/test-data.jsx");
 var _ = require("lodash");

@@ -1,4 +1,4 @@
-var React = require("react/addons");
+var React = require("react");
 var Opentip = require('opentip');
 var classes = require("classnames");
 var IsMobileMixin = require('react-ismobile-mixin');
