@@ -4,5 +4,4 @@ bower_components
 *.log
 
 
-react-xzibit-select.js
-react-xzibit-select.js.map
+bundle.js

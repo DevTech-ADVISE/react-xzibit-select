@@ -1,6 +1,6 @@
-var React = require("react/addons");
+var React = require('react');
 var Opentip = require('opentip');
-var classes = require("classnames");
+var classes = require('classnames');
 var IsMobileMixin = require('react-ismobile-mixin');
 require('opentip/css/opentip.css');
 
@@ -23,7 +23,7 @@ var OptionListItem = React.createClass({
       return;
     }
 
-    this.tooltip = new Opentip(React.findDOMNode(component), this.props.toolTipContent, this.props.toolTipTitle, this.props.openTipOptions);
+    this.tooltip = new Opentip(component, this.props.toolTipContent, this.props.toolTipTitle, this.props.openTipOptions);
   },
   componentDidUpdate: function() {
     //handles mouse-based weirdness, mostly for testing.
@@ -51,10 +51,10 @@ var OptionListItem = React.createClass({
   render: function() {
     var hoverIcon = null;
 
-    if(this.props.toolTipContent && this.props.toolTipContent !== "") {
+    if(this.props.toolTipContent && this.props.toolTipContent !== '') {
       hoverIcon = (
         <div
-          className="hover-icon"
+          className='hover-icon'
           onClick={this.openSkylight}
           ref={this.createTooltip}>
           i
@@ -62,14 +62,14 @@ var OptionListItem = React.createClass({
       );
     }
 
-    var className = classes("rxs-option-list-item", this.props.className, {"add-all": this.props.addAll});
+    var className = classes('rxs-option-list-item', this.props.className, {'add-all': this.props.addAll});
 
     return (
       <div className={className}>
         <div
-          role="button"
-          tabIndex="0"
-          className="rxs-option-button"
+          role='button'
+          tabIndex='0'
+          className='rxs-option-button'
           onClick={this.handleClick}>
           {this.props.label}
           {hoverIcon}
