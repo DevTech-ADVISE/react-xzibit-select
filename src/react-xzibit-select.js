@@ -163,8 +163,6 @@ var XzibitSelect = React.createClass({
 			if(dim.groupByKey)
 				groupByKey = dim.groupByKey;
 
-			console.log(dim.info)
-
 			return (<ReactCompactMultiselect
 						key={dim.name}
 						label={dim.name}
