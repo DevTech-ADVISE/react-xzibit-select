@@ -1,7 +1,8 @@
 var React = require('react');
-var XzibitSelect = require('./lib/react-xzibit-select.jsx');
-var testData = require("./lib/test-data.jsx");
-var _ = require("lodash");
+var ReactDOM = require('react-dom');
+var XzibitSelect = require('./src/react-xzibit-select');
+var testData = require('./src/test-data');
+var _ = require('lodash');
 
 
 var DemoXzibitSelect = React.createClass({
@@ -22,7 +23,7 @@ var DemoXzibitSelect = React.createClass({
 		})).map(function(color){
 			return {value: color, label: color};
 		});
-		var groupPlantsKey = "size";
+		var groupPlantsKey = 'size';
 		var growsOnOptions = _.uniq(testData.fruits.map(function(fruit){
 			var dimension = {};
 			if (Array.isArray(fruit.growsOn)){
@@ -42,11 +43,11 @@ var DemoXzibitSelect = React.createClass({
 		});
 
 		return [
-			{name: "Color",
-			 key: "color",
+			{name: 'Color',
+			 key: 'color',
 			 options: colorOptions},
-			{name: "Grows On",
-			 key: "growsOn",
+			{name: 'Grows On',
+			 key: 'growsOn',
 			 options: growsOnOptions,
 			 groupByKey: groupPlantsKey}
 		];
@@ -56,21 +57,21 @@ var DemoXzibitSelect = React.createClass({
 		console.log(values);
 	},
 	render: function() {
-		//var divStyles = {height: 600, width: 800, border: '1px solid #aaa;'}; width and height are fluid meaning whatever container we place this in it will fill, 
-		//alternately you can also add a fixed width / height here to constrain the layout 
+		//var divStyles = {height: 600, width: 800, border: '1px solid #aaa;'}; width and height are fluid meaning whatever container we place this in it will fill,
+		//alternately you can also add a fixed width / height here to constrain the layout
 		var divStyles = {boxShadow: '0px 0px 0px 1px #cacaca'};
 
 
 		return (
 			<div style={divStyles}>
-				<XzibitSelect 
-					options={this.options()} 
-					values={this.state.values} 
-					onChange={this.onChange} 
+				<XzibitSelect
+					options={this.options()}
+					values={this.state.values}
+					onChange={this.onChange}
 					filterDimensions={this.filterDimensions()}/>
 			</div>
 		);
 	}
 });
 
-React.render(React.createElement(DemoXzibitSelect), document.getElementById('main'));
+ReactDOM.render(React.createElement(DemoXzibitSelect), document.getElementById('main'));

@@ -1,12 +1,13 @@
-var React = require("react");
+var React = require('react');
+var update = require('react-addons-update');
 var types = React.PropTypes;
-var OptionList = require("./components/option-list.jsx");
-var ReactCompactMultiselect = require("react-compact-multiselect");
-var TagList = require("react-tag-list");
+var OptionList = require('./components/option-list');
+var ReactCompactMultiselect = require('react-compact-multiselect');
+var TagList = require('react-tag-list');
 var SkyLight = require('react-skylight');
 var IsMobileMixin = require('react-ismobile-mixin');
 
-require("./react-xzibit-select.scss");
+require('./react-xzibit-select.scss');
 
 var XzibitSelect = React.createClass({
 	getInitialState: function() {
@@ -30,7 +31,7 @@ var XzibitSelect = React.createClass({
 	getDefaultProps: function() {
 		return {
 			addAll: true,
-			placeholderText: "Type here to filter options",
+			placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
         borderRadius: 2,
@@ -41,7 +42,7 @@ var XzibitSelect = React.createClass({
         hideDelay: 0,
         showEffectDuration: 0,
         hideEffectDuration: 0,
-        tipJoint: "top left",
+        tipJoint: 'top left',
         stem: false
       }
 		};
@@ -55,7 +56,7 @@ var XzibitSelect = React.createClass({
 	removeAll: function() {
 		this.props.onChange([]);
 	},
-	addValue: function(valToAdd){ 
+	addValue: function(valToAdd){
 		var newValueState = this.props.values.slice(0);
 		newValueState.push(valToAdd);
 		this.props.onChange(newValueState);
@@ -69,7 +70,7 @@ var XzibitSelect = React.createClass({
 		return this.props.options.filter(function(opt){
 			if(this.props.values.indexOf(opt.value) !== -1 || !this.dimensionFilterIncludes(opt)) return false;
 			return (opt.label.toLowerCase().indexOf(this.state.labelFilter.toLowerCase()) > -1);
-			
+
 		}, this);
 	},
 	onMobileTooltip: function(title, content) {
@@ -82,7 +83,7 @@ var XzibitSelect = React.createClass({
 			this.refs.tooltip.show);
 	},
 	dimensionFilterIncludes: function(opt) {
-		
+
 		if (Object.keys(this.state.dimensionFilter).length < 1){
 			return true;
 		}
@@ -129,20 +130,16 @@ var XzibitSelect = React.createClass({
 	},
 	generateUpdateDimensionFilter: function(dimensionName) {
 		/**
-		 *  {"Source" : [], "Sector" : []}
+		 *  {'Source' : [], 'Sector' : []}
 		 */
 		return function(values) {
 			var spec = {};
 			spec[dimensionName] = {$set: values};
-			var newState = React.addons.update(this.state.dimensionFilter, spec);
+			var newState = update(this.state.dimensionFilter, spec);
 			this.setState({dimensionFilter: newState});
 		}.bind(this);
 	},
 	tagListValues: function() {
-		// SLOW!! too slow??
-		// ...fixing...
-		// I might have fixed it -Stephen
-
 		var mapFunc = function(){};
 
 		if (this.props.optionsByValue) {
@@ -162,15 +159,17 @@ var XzibitSelect = React.createClass({
 	render: function() {
 		var filteredOptions = this.filteredOptions();
 		var selectFilters = this.props.filterDimensions.map(function(dim){
-			var groupByKey = "";
+			var groupByKey = '';
 			if(dim.groupByKey)
 				groupByKey = dim.groupByKey;
 
-			return (<ReactCompactMultiselect 
+			console.log(dim.info)
+
+			return (<ReactCompactMultiselect
 						key={dim.name}
-						label={dim.name} 
+						label={dim.name}
 						options={dim.options}
-						info={dim.info} 
+						info={dim.info}
 						initialValue={[]}
 						groupBy={groupByKey}
 						onChange={this.generateUpdateDimensionFilter(dim.name)}
@@ -186,42 +185,42 @@ var XzibitSelect = React.createClass({
     if(this.isMobile()) {
       skylight = (
         <SkyLight
-          ref="tooltip"
+          ref='tooltip'
           title={this.state.mobileTooltipTitle}
-          className="mobile-tooltip">
+          className='mobile-tooltip'>
           {this.state.mobileTooltipContent}
         </SkyLight>
       );
     }
 
 		return (
-			<div className="react-xzibit-select">
-				<div className="fluid-layout">
-					<div className="header">
-						<div className="rxs-label-filter">
-							<div className="rsv-label-filter-container">
-							<input  
-								onChange={this.updateLabelFilter} 
-								value={this.state.labelFilter} 
+			<div className='react-xzibit-select'>
+				<div className='fluid-layout'>
+					<div className='header'>
+						<div className='rxs-label-filter'>
+							<div className='rsv-label-filter-container'>
+							<input
+								onChange={this.updateLabelFilter}
+								value={this.state.labelFilter}
 								placeholder={this.props.placeholderText} />
-							<button className="rxs-label-filter-clear" name="clear-filter" onClick={this.clearLabelFilter}>&#215;</button>
+							<button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearLabelFilter}>&#215;</button>
 							</div>
 						</div>
-						<TagList 
-							values={this.tagListValues()} 
+						<TagList
+							values={this.tagListValues()}
 							onRemove={this.removeValue}
 							removeAll={this.removeAll}
-							placeholderText="&nbsp;"
+							placeholderText='&nbsp;'
 							collapsedRows={1} />
 					</div>
-					<OptionList 
-						options={filteredOptions} 
+					<OptionList
+						options={filteredOptions}
 						onClick={this.addValue}
 						addAll={addAll}
 						addAllFunc={this.addAllFunc}
 						onMobileTooltip={this.onMobileTooltip}/>
-					<div className="footer">
-						<div className="filter-multiselect">
+					<div className='footer'>
+						<div className='filter-multiselect'>
 						{selectFilters}
 						</div>
 					</div>
