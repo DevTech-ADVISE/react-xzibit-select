@@ -4,7 +4,7 @@ var types = React.PropTypes;
 var OptionList = require('./components/option-list');
 var ReactCompactMultiselect = require('react-compact-multiselect');
 var TagList = require('react-tag-list');
-var SkyLight = require('react-skylight');
+var SkyLight = require('react-skylight').default;
 var IsMobileMixin = require('react-ismobile-mixin');
 
 require('./react-xzibit-select.scss');
