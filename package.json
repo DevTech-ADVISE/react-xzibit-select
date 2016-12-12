@@ -48,7 +48,7 @@
     "react-compact-multiselect": "git+https://github.com/BI/react-compact-multiselect",
     "react-ismobile-mixin": "git://github.com/BI/react-ismobile-mixin",
     "react-lazy-render": "git+https://github.com/BI/react-lazy-render",
-    "react-sizebox": "git+https://github.com/BI/react-sizebox",
+    "react-sizebox": "git+https://github.com/BI/react-sizebox#v0.1",
     "react-skylight": "^0.4.0",
     "react-tag-list": "git+https://github.com/BI/react-tag-list"
   }
