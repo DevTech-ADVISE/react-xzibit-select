@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "lunr": "^1.0.0",
     "opentip": "git://github.com/BI/opentip",
     "react-addons-update": "^15.1.0",
     "react-compact-multiselect": "git+https://github.com/BI/react-compact-multiselect",

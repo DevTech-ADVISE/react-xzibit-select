@@ -6,6 +6,7 @@ var ReactCompactMultiselect = require('react-compact-multiselect');
 var TagList = require('react-tag-list');
 var SkyLight = require('react-skylight').default;
 var IsMobileMixin = require('react-ismobile-mixin');
+var lunr = require('lunr')
 
 require('./react-xzibit-select.scss');
 
@@ -19,13 +20,13 @@ var XzibitSelect = React.createClass({
 		};
 	},
 	propTypes: {
+		addAll: types.bool,
+		addAllLimit: types.number,
+		filterDimensions: types.array,
+		onChange: types.func,
 		options: types.array,
 		optionsByValue: types.any,
-		values: types.array,
-		onChange: types.func,
-		filterDimensions: types.array,
-		addAll: types.bool,
-		addAllLimit: types.number
+		values: types.array
 	},
 	mixins: [IsMobileMixin],
 	getDefaultProps: function() {
