@@ -19,6 +19,7 @@ var XzibitSelect = React.createClass({
 			mobileTooltipTitle: null
 		};
 	},
+
 	propTypes: {
 		addAll: types.bool,
 		addAllLimit: types.number,
@@ -28,7 +29,9 @@ var XzibitSelect = React.createClass({
 		optionsByValue: types.any,
 		values: types.array
 	},
+
 	mixins: [IsMobileMixin],
+
 	getDefaultProps: function() {
 		return {
 			addAll: true,
@@ -74,6 +77,7 @@ var XzibitSelect = React.createClass({
 
 		}, this);
 	},
+
 	onMobileTooltip: function(title, content) {
 		if(!this.isMobile()) {
 			return;
@@ -83,8 +87,8 @@ var XzibitSelect = React.createClass({
 			{mobileTooltipTitle: title, mobileTooltipContent: content},
 			this.refs.tooltip.show);
 	},
-	dimensionFilterIncludes: function(opt) {
 
+	dimensionFilterIncludes: function(opt) {
 		if (Object.keys(this.state.dimensionFilter).length < 1){
 			return true;
 		}
@@ -122,13 +126,16 @@ var XzibitSelect = React.createClass({
 
 		return retVal;
 	},
+
 	updateLabelFilter: function(event) {
 		// TODO: add throttling
 		this.setState({labelFilter: event.target.value});
 	},
+
 	clearLabelFilter: function() {
 	  this.setState({labelFilter: ''});
 	},
+
 	generateUpdateDimensionFilter: function(dimensionName) {
 		/**
 		 *  {'Source' : [], 'Sector' : []}
@@ -140,6 +147,7 @@ var XzibitSelect = React.createClass({
 			this.setState({dimensionFilter: newState});
 		}.bind(this);
 	},
+
 	tagListValues: function() {
 		var mapFunc = function(){};
 
@@ -157,9 +165,24 @@ var XzibitSelect = React.createClass({
 
 		return this.props.values.map(mapFunc, this);
 	},
-	render: function() {
-		var filteredOptions = this.filteredOptions();
-		var selectFilters = this.props.filterDimensions.map(function(dim){
+
+	getSkylight: function() {
+		if (!this.isMobile()) {
+			return null;
+		}
+
+		return (
+			<SkyLight
+				ref='tooltip'
+				title={this.state.mobileTooltipTitle}
+				className='mobile-tooltip'>
+				{this.state.mobileTooltipContent}
+			</SkyLight>
+		);
+	},
+
+	getSelectFilters: function() {
+		return this.props.filterDimensions.map(function(dim) {
 			var groupByKey = '';
 			if(dim.groupByKey)
 				groupByKey = dim.groupByKey;
@@ -174,23 +197,12 @@ var XzibitSelect = React.createClass({
 						onChange={this.generateUpdateDimensionFilter(dim.name)}
 						layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
 		}, this);
+	},
 
-		var addAll = this.props.addAll;
-		if(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit) {
-			addAll=false;
-		}
-
-		var skylight = null;
-    if(this.isMobile()) {
-      skylight = (
-        <SkyLight
-          ref='tooltip'
-          title={this.state.mobileTooltipTitle}
-          className='mobile-tooltip'>
-          {this.state.mobileTooltipContent}
-        </SkyLight>
-      );
-    }
+	render: function() {
+		var filteredOptions = this.filteredOptions();
+		var selectFilters = this.getSelectFilters();
+		var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
 
 		return (
 			<div className='react-xzibit-select'>
@@ -224,7 +236,7 @@ var XzibitSelect = React.createClass({
 						</div>
 					</div>
 				</div>
-				{skylight}
+				{this.getSkylight()}
 			</div>
 		);
 	}
