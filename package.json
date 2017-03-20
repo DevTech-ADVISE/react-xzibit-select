@@ -1,6 +1,6 @@
 {
   "name": "react-xzibit-select",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "react-xzibit-select",
   "scripts": {
     "test": "eslint src/ spec/ && karma start karma.conf.js",
