@@ -23,10 +23,13 @@ var XzibitSelect = React.createClass({
 	propTypes: {
 		addAll: types.bool,
 		addAllLimit: types.number,
+		filterChangeThrotleMs: types.number,
 		filterDimensions: types.array,
 		onChange: types.func,
 		options: types.array,
 		optionsByValue: types.any,
+		refField: types.string,
+		searchFields: types.array,
 		values: types.array
 	},
 
@@ -35,6 +38,7 @@ var XzibitSelect = React.createClass({
 	getDefaultProps: function() {
 		return {
 			addAll: true,
+			filterChangeThrotleMs: 200,
 			placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
@@ -48,34 +52,107 @@ var XzibitSelect = React.createClass({
         hideEffectDuration: 0,
         tipJoint: 'top left',
         stem: false
-      }
+      },
+			refField: 'value',
+			searchFields: ['label']
 		};
 	},
+
+	componentWillMount: function() {
+		this.blankSearch()
+	},
+
+	componentWillReceiveProps: function() {
+		this.blankSearch()
+	},
+
+	blankSearch: function() {
+		this.search = null
+	},
+
+	getSearch: function() {
+		if (!this.search) {
+			this.search = this.makeSearch(this.props.searchFields, this.props.refField)
+			this.fillSearch(this.search, this.props.options)
+		}
+
+		return this.search
+	},
+
+	makeSearch: function(searchFields, refField) {
+		var search = lunr(function() {
+			var lunrThis = this
+			searchFields.forEach(function (field) {
+				var name = field.name || field
+				var weight = field.weight || 1
+				lunrThis.field(name, weight)
+			})
+
+			lunrThis.ref(refField)
+		})
+
+		return search
+	},
+
+	getAvailableOptions: function(options) {
+		return options.filter(function (opt) {
+			var isSelected = this.props.values.indexOf(opt.value) !== -1
+			var isInDimension = this.dimensionFilterIncludes(opt)
+			return !isSelected && isInDimension
+		}, this)
+	},
+
+	fillSearch: function(search, options) {
+		this.getAvailableOptions(options).forEach(function (opt) {
+			search.add(opt)
+		})
+	},
+
 	removeValue: function(valToRemove) {
 		var newValueState = this.props.values.filter(function(val){
 			return val !== valToRemove;
 		});
 		this.props.onChange(newValueState);
 	},
+
 	removeAll: function() {
 		this.props.onChange([]);
 	},
+
 	addValue: function(valToAdd){
 		var newValueState = this.props.values.slice(0);
 		newValueState.push(valToAdd);
 		this.props.onChange(newValueState);
 	},
+
 	addAllFunc: function() {
 		var filteredOptionValues = this.filteredOptions().map(function(opt){ return opt.value;});
 		var newValueState = filteredOptionValues.concat(this.props.values);
 		this.props.onChange(newValueState);
 	},
-	filteredOptions: function() {
-		return this.props.options.filter(function(opt){
-			if(this.props.values.indexOf(opt.value) !== -1 || !this.dimensionFilterIncludes(opt)) return false;
-			return (opt.label.toLowerCase().indexOf(this.state.labelFilter.toLowerCase()) > -1);
 
-		}, this);
+	filteredOptions: function() {
+		var labelFilter = this.state.labelFilter.toLowerCase()
+		if(!labelFilter) {
+			return this.getAvailableOptions(this.props.options)
+		}
+
+		// lunr doesn't filter on a or i
+		if(labelFilter === 'a' || labelFilter === 'i') {
+			return this.getAvailableOptions(this.props.options)
+		}
+
+		var results = this.getSearch().search(this.state.labelFilter.toLowerCase())
+
+		var optionMap = {}
+		this.props.options.forEach(function (opt) {
+			var ref = opt[this.props.refField]
+			optionMap[ref] = opt
+		}, this)
+
+		return results.map(function(r) {
+			return optionMap[r.ref]
+		})
 	},
 
 	onMobileTooltip: function(title, content) {
@@ -126,6 +203,8 @@ var XzibitSelect = React.createClass({
 
 		return retVal;
 	},
+
+
 
 	updateLabelFilter: function(event) {
 		// TODO: add throttling
