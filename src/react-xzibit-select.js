@@ -62,7 +62,7 @@ var XzibitSelect = React.createClass({
 		this.blankSearch()
 	},
 
-	componentWillReceiveProps: function() {
+	componentWillUpdate: function() {
 		this.blankSearch()
 	},
 
