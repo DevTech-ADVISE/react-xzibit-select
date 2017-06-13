@@ -223,6 +223,7 @@ var XzibitSelect = React.createClass({
 			var spec = {};
 			spec[dimensionName] = {$set: values};
 			var newState = update(this.state.dimensionFilter, spec);
+			this.blankSearch();
 			this.setState({dimensionFilter: newState});
 		}.bind(this);
 	},
