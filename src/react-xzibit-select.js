@@ -108,6 +108,23 @@ var XzibitSelect = React.createClass({
 		})
 	},
 
+	subStringSearch: function (searchInput) {
+		return this.getAvailableOptions(this.props.options).filter(function(opt) {
+			var foundValue = false
+			for(var i = 0; i < this.props.searchFields.length; i ++){
+				var fieldValue = opt[this.props.searchFields[i]]
+				// If the searchInput exists in the fieldValue
+				// break and keep this option in the list
+				if(fieldValue.indexOf(searchInput) > -1) {
+					foundValue = true
+					break
+				}
+			}
+			return foundValue
+		}.bind(this))
+		.map(function(opt) { return opt[this.props.refField]}.bind(this))
+	},
+
 	removeValue: function(valToRemove) {
 		var newValueState = this.props.values.filter(function(val){
 			return val !== valToRemove;
@@ -131,6 +148,16 @@ var XzibitSelect = React.createClass({
 		this.props.onChange(newValueState);
 	},
 
+	mergeResults: function (array1, array2) {
+		// Remove any values from array1 that exist in array2
+		var array2MinusArray1 = array2.filter(function(a2Element) {
+			return array1.indexOf(a2Element) === -1
+		})
+		// Then concat the arrays that now have no duplicates
+		// This is more performant than doing the concat upfront
+		return array1.concat(array2MinusArray1)
+	},
+
 	filteredOptions: function() {
 		var labelFilter = this.state.labelFilter.toLowerCase()
 		if(!labelFilter) {
@@ -142,16 +169,20 @@ var XzibitSelect = React.createClass({
 			return this.getAvailableOptions(this.props.options)
 		}
 
-		var results = this.getSearch().search(this.state.labelFilter.toLowerCase())
-
+		var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase())
+			.map(function(result) {
+				return result.ref
+			})
+		var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase())
+		var mergedResults = this.mergeResults(lunrResults, substringResults)
 		var optionMap = {}
 		this.props.options.forEach(function (opt) {
 			var ref = opt[this.props.refField]
 			optionMap[ref] = opt
 		}, this)
-
-		return results.map(function(r) {
-			return optionMap[r.ref]
+		
+		return mergedResults.map(function(resultRef) {
+			return optionMap[resultRef]
 		})
 	},
 
