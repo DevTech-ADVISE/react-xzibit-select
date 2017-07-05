@@ -55,7 +55,7 @@ var OptionListItem = React.createClass({
       hoverIcon = (
         <div
           className='hover-icon'
-          onClick={this.openSkylight}
+          onTouchStart={this.openSkylight}
           ref={this.createTooltip}>
           i
         </div>
@@ -66,12 +66,14 @@ var OptionListItem = React.createClass({
 
     return (
       <div className={className}>
-        <div
-          role='button'
-          tabIndex='0'
-          className='rxs-option-button'
-          onClick={this.handleClick}>
-          {this.props.label}
+        <div className='rxs-option-button'>
+          <div
+            role='button'
+            className='rxs-option-button-click'
+            tabIndex='0'
+            onClick={this.handleClick}>
+            {this.props.label}
+          </div>
           {hoverIcon}
         </div>
       </div>
