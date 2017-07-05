@@ -16,7 +16,7 @@ html, body, #main {height:100%;margin:0;}
 	box-sizing:border-box;
 	padding:8px;
 
-	& > div {height:100%;}	
+	& > div {height:100%;}
 }
 
 
@@ -41,10 +41,10 @@ html, body, #main {height:100%;margin:0;}
 			&.rsx-SizeBox {
 				overflow: hidden; //overflow added to child
 				display: table-cell;
-			} 
+			}
 		}
 	}
-	
+
 	.header {background:linear-gradient(#f0f0f0, #f6f6f6);}
 	.footer {background: linear-gradient(#f9f9f9, #efefef);}
 
@@ -56,7 +56,7 @@ html, body, #main {height:100%;margin:0;}
 			min-height:auto;
 		}
 	}
-	
+
 	.custom-option-tag {
 		display: inline;
 		margin-left: 10px;
@@ -142,7 +142,7 @@ html, body, #main {height:100%;margin:0;}
 			min-height: 36vh;
 			max-height: 74vh;
 			margin-bottom: 8px;
-			
+
 			//creates the tail on the drop-box content
 			&:before {
 				border: inset 7px;
@@ -172,7 +172,7 @@ html, body, #main {height:100%;margin:0;}
 			}
 		}
 	}
-	
+
 	.rxs-label-filter {
 		clear: both;
 		padding: 8px 8px 0;
@@ -203,7 +203,7 @@ html, body, #main {height:100%;margin:0;}
 			   font-style: italic;
 			}
 
-			&:-ms-input-placeholder {  
+			&:-ms-input-placeholder {
 			   font-size:.8em;
 			   line-height: 2.25;
 			   text-indent: .2em;
@@ -249,7 +249,6 @@ html, body, #main {height:100%;margin:0;}
 			@extend .font;
 			@extend .user-select;
 			background-color: #dbeff9;
-			padding: 10px 2.4em 10px .4em;
 			position: relative;
 			font-size: 1em;
 			line-height: 1;
@@ -258,6 +257,10 @@ html, body, #main {height:100%;margin:0;}
 			width: 100%;
 			text-align: left;
 			box-sizing:border-box;
+
+			.rxs-option-button-click {
+				padding: 10px 2.4em 10px .4em;
+			}
 
 			&:hover {
 				background-color: #e3f3fb;
