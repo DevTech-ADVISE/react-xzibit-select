@@ -122,7 +122,7 @@ var XzibitSelect = React.createClass({
 			}
 			return foundValue
 		}.bind(this))
-		.map(function(opt) { return opt[this.props.refField]}.bind(this))
+		.map(function(opt) { return opt[this.props.refField]}, this)
 	},
 
 	removeValue: function(valToRemove) {
@@ -180,7 +180,7 @@ var XzibitSelect = React.createClass({
 			var ref = opt[this.props.refField]
 			optionMap[ref] = opt
 		}, this)
-		
+
 		return mergedResults.map(function(resultRef) {
 			return optionMap[resultRef]
 		})
