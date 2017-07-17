@@ -11,35 +11,35 @@ var lunr = require('lunr')
 require('./react-xzibit-select.scss');
 
 var XzibitSelect = React.createClass({
-	getInitialState: function() {
-		return {
-			labelFilter: '',
-			dimensionFilter: {},
-			mobileTooltipContent: null,
-			mobileTooltipTitle: null
-		};
-	},
+  getInitialState: function() {
+    return {
+      labelFilter: '',
+      dimensionFilter: {},
+      mobileTooltipContent: null,
+      mobileTooltipTitle: null
+    };
+  },
 
-	propTypes: {
-		addAll: types.bool,
-		addAllLimit: types.number,
-		filterChangeThrotleMs: types.number,
-		filterDimensions: types.array,
-		onChange: types.func,
-		options: types.array,
-		optionsByValue: types.any,
-		refField: types.string,
-		searchFields: types.array,
-		values: types.array
-	},
+  propTypes: {
+    addAll: types.bool,
+    addAllLimit: types.number,
+    filterChangeThrotleMs: types.number,
+    filterDimensions: types.array,
+    onChange: types.func,
+    options: types.array,
+    optionsByValue: types.any,
+    refField: types.string,
+    searchFields: types.array,
+    values: types.array
+  },
 
-	mixins: [IsMobileMixin],
+  mixins: [IsMobileMixin],
 
-	getDefaultProps: function() {
-		return {
-			addAll: true,
-			filterChangeThrotleMs: 200,
-			placeholderText: 'Type here to filter options',
+  getDefaultProps: function() {
+    return {
+      addAll: true,
+      filterChangeThrotleMs: 200,
+      placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
         borderRadius: 2,
@@ -53,304 +53,304 @@ var XzibitSelect = React.createClass({
         tipJoint: 'top left',
         stem: false
       },
-			refField: 'value',
-			searchFields: ['label']
-		};
-	},
+      refField: 'value',
+      searchFields: ['label']
+    };
+  },
 
-	componentWillMount: function() {
-		this.blankSearch()
-	},
+  componentWillMount: function() {
+    this.blankSearch()
+  },
 
-	componentWillReceiveProps: function() {
-		this.blankSearch()
-	},
+  componentWillReceiveProps: function() {
+    this.blankSearch()
+  },
 
-	blankSearch: function() {
-		this.search = null
-	},
+  blankSearch: function() {
+    this.search = null
+  },
 
-	getSearch: function() {
-		if (!this.search) {
-			this.search = this.makeSearch(this.props.searchFields, this.props.refField)
-			this.fillSearch(this.search, this.props.options)
-		}
+  getSearch: function() {
+    if (!this.search) {
+      this.search = this.makeSearch(this.props.searchFields, this.props.refField)
+      this.fillSearch(this.search, this.props.options)
+    }
 
-		return this.search
-	},
+    return this.search
+  },
 
-	makeSearch: function(searchFields, refField) {
-		var search = lunr(function() {
-			var lunrThis = this
-			searchFields.forEach(function (field) {
-				var name = field.name || field
-				var weight = field.weight || 1
-				lunrThis.field(name, weight)
-			})
+  makeSearch: function(searchFields, refField) {
+    var search = lunr(function() {
+      var lunrThis = this
+      searchFields.forEach(function (field) {
+        var name = field.name || field
+        var weight = field.weight || 1
+        lunrThis.field(name, weight)
+      })
 
-			lunrThis.ref(refField)
-		})
+      lunrThis.ref(refField)
+    })
 
-		return search
-	},
+    return search
+  },
 
-	getAvailableOptions: function(options) {
-		return options.filter(function (opt) {
-			var isSelected = this.props.values.indexOf(opt.value) !== -1
-			var isInDimension = this.dimensionFilterIncludes(opt)
-			return !isSelected && isInDimension
-		}, this)
-	},
+  getAvailableOptions: function(options) {
+    return options.filter(function (opt) {
+      var isSelected = this.props.values.indexOf(opt.value) !== -1
+      var isInDimension = this.dimensionFilterIncludes(opt)
+      return !isSelected && isInDimension
+    }, this)
+  },
 
-	fillSearch: function(search, options) {
-		this.getAvailableOptions(options).forEach(function (opt) {
-			search.add(opt)
-		})
-	},
+  fillSearch: function(search, options) {
+    this.getAvailableOptions(options).forEach(function (opt) {
+      search.add(opt)
+    })
+  },
 
-	subStringSearch: function (searchInput) {
-		return this.getAvailableOptions(this.props.options).filter(function(opt) {
-			var foundValue = false
-			for(var i = 0; i < this.props.searchFields.length; i ++){
-				var fieldValue = opt[this.props.searchFields[i]]
-				// If the searchInput exists in the fieldValue
-				// break and keep this option in the list
-				if(fieldValue.indexOf(searchInput) > -1) {
-					foundValue = true
-					break
-				}
-			}
-			return foundValue
-		}.bind(this))
-		.map(function(opt) { return opt[this.props.refField]}, this)
-	},
+  subStringSearch: function (searchInput) {
+    return this.getAvailableOptions(this.props.options).filter(function(opt) {
+      var foundValue = false
+      for(var i = 0; i < this.props.searchFields.length; i ++){
+        var fieldValue = opt[this.props.searchFields[i]]
+        // If the searchInput exists in the fieldValue
+        // break and keep this option in the list
+        if(fieldValue.indexOf(searchInput) > -1) {
+          foundValue = true
+          break
+        }
+      }
+      return foundValue
+    }.bind(this))
+    .map(function(opt) { return opt[this.props.refField]}, this)
+  },
 
-	removeValue: function(valToRemove) {
-		var newValueState = this.props.values.filter(function(val){
-			return val !== valToRemove;
-		});
-		this.props.onChange(newValueState);
-	},
+  removeValue: function(valToRemove) {
+    var newValueState = this.props.values.filter(function(val){
+      return val !== valToRemove;
+    });
+    this.props.onChange(newValueState);
+  },
 
-	removeAll: function() {
-		this.props.onChange([]);
-	},
+  removeAll: function() {
+    this.props.onChange([]);
+  },
 
-	addValue: function(valToAdd){
-		var newValueState = this.props.values.slice(0);
-		newValueState.push(valToAdd);
-		this.props.onChange(newValueState);
-	},
+  addValue: function(valToAdd){
+    var newValueState = this.props.values.slice(0);
+    newValueState.push(valToAdd);
+    this.props.onChange(newValueState);
+  },
 
-	addAllFunc: function() {
-		var filteredOptionValues = this.filteredOptions().map(function(opt){ return opt.value;});
-		var newValueState = filteredOptionValues.concat(this.props.values);
-		this.props.onChange(newValueState);
-	},
+  addAllFunc: function() {
+    var filteredOptionValues = this.filteredOptions().map(function(opt){ return opt.value;});
+    var newValueState = filteredOptionValues.concat(this.props.values);
+    this.props.onChange(newValueState);
+  },
 
-	mergeResults: function (array1, array2) {
-		// Remove any values from array1 that exist in array2
-		var array2MinusArray1 = array2.filter(function(a2Element) {
-			return array1.indexOf(a2Element) === -1
-		})
-		// Then concat the arrays that now have no duplicates
-		// This is more performant than doing the concat upfront
-		return array1.concat(array2MinusArray1)
-	},
+  mergeResults: function (array1, array2) {
+    // Remove any values from array1 that exist in array2
+    var array2MinusArray1 = array2.filter(function(a2Element) {
+      return array1.indexOf(a2Element) === -1
+    })
+    // Then concat the arrays that now have no duplicates
+    // This is more performant than doing the concat upfront
+    return array1.concat(array2MinusArray1)
+  },
 
-	filteredOptions: function() {
-		var labelFilter = this.state.labelFilter.toLowerCase()
-		if(!labelFilter) {
-			return this.getAvailableOptions(this.props.options)
-		}
+  filteredOptions: function() {
+    var labelFilter = this.state.labelFilter.toLowerCase()
+    if(!labelFilter) {
+      return this.getAvailableOptions(this.props.options)
+    }
 
-		// lunr doesn't filter on a or i
-		if(labelFilter === 'a' || labelFilter === 'i') {
-			return this.getAvailableOptions(this.props.options)
-		}
+    // lunr doesn't filter on a or i
+    if(labelFilter === 'a' || labelFilter === 'i') {
+      return this.getAvailableOptions(this.props.options)
+    }
 
-		var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase())
-			.map(function(result) {
-				return result.ref
-			})
-		var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase())
-		var mergedResults = this.mergeResults(lunrResults, substringResults)
-		var optionMap = {}
-		this.props.options.forEach(function (opt) {
-			var ref = opt[this.props.refField]
-			optionMap[ref] = opt
-		}, this)
+    var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase())
+      .map(function(result) {
+        return result.ref
+      })
+    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase())
+    var mergedResults = this.mergeResults(lunrResults, substringResults)
+    var optionMap = {}
+    this.props.options.forEach(function (opt) {
+      var ref = opt[this.props.refField]
+      optionMap[ref] = opt
+    }, this)
 
-		return mergedResults.map(function(resultRef) {
-			return optionMap[resultRef]
-		})
-	},
+    return mergedResults.map(function(resultRef) {
+      return optionMap[resultRef]
+    })
+  },
 
-	onMobileTooltip: function(title, content) {
-		if(!this.isMobile()) {
-			return;
-		}
+  onMobileTooltip: function(title, content) {
+    if(!this.isMobile()) {
+      return;
+    }
 
-		this.setState(
-			{mobileTooltipTitle: title, mobileTooltipContent: content},
-			this.refs.tooltip.show);
-	},
+    this.setState(
+      {mobileTooltipTitle: title, mobileTooltipContent: content},
+      this.refs.tooltip.show);
+  },
 
-	dimensionFilterIncludes: function(opt) {
-		if (Object.keys(this.state.dimensionFilter).length < 1){
-			return true;
-		}
+  dimensionFilterIncludes: function(opt) {
+    if (Object.keys(this.state.dimensionFilter).length < 1){
+      return true;
+    }
 
-		var retVal = true;
+    var retVal = true;
 
-		var filterHits = this.props.filterDimensions.map(function(dimension){
-			var key = dimension.key;
-			var name = dimension.name;
-			var filterVals = this.state.dimensionFilter[name];
-			if (filterVals === undefined || filterVals.length < 1) {
-				return true;
-			}
-			if (Array.isArray(opt[key])){
-				var found = false;
-				opt[key].forEach(function(optVal){
-					if (filterVals.indexOf(optVal) > -1) {
-						found = true;
-					}
-				});
-				return found;
-			} else {
-				if (filterVals.indexOf(opt[key]) > -1) {
-					return true;
-				}
-			}
-			return false;
-		}, this);
+    var filterHits = this.props.filterDimensions.map(function(dimension){
+      var key = dimension.key;
+      var name = dimension.name;
+      var filterVals = this.state.dimensionFilter[name];
+      if (filterVals === undefined || filterVals.length < 1) {
+        return true;
+      }
+      if (Array.isArray(opt[key])){
+        var found = false;
+        opt[key].forEach(function(optVal){
+          if (filterVals.indexOf(optVal) > -1) {
+            found = true;
+          }
+        });
+        return found;
+      } else {
+        if (filterVals.indexOf(opt[key]) > -1) {
+          return true;
+        }
+      }
+      return false;
+    }, this);
 
-		filterHits.forEach(function(fh){
-			if (!fh){
-				retVal = false;
-			}
-		});
+    filterHits.forEach(function(fh){
+      if (!fh){
+        retVal = false;
+      }
+    });
 
-		return retVal;
-	},
+    return retVal;
+  },
 
 
 
-	updateLabelFilter: function(event) {
-		// TODO: add throttling
-		this.setState({labelFilter: event.target.value});
-	},
+  updateLabelFilter: function(event) {
+    // TODO: add throttling
+    this.setState({labelFilter: event.target.value});
+  },
 
-	clearLabelFilter: function() {
-	  this.setState({labelFilter: ''});
-	},
+  clearLabelFilter: function() {
+    this.setState({labelFilter: ''});
+  },
 
-	generateUpdateDimensionFilter: function(dimensionName) {
-		/**
-		 *  {'Source' : [], 'Sector' : []}
-		 */
-		return function(values) {
-			var spec = {};
-			spec[dimensionName] = {$set: values};
-			var newState = update(this.state.dimensionFilter, spec);
-			this.blankSearch();
-			this.setState({dimensionFilter: newState});
-		}.bind(this);
-	},
+  generateUpdateDimensionFilter: function(dimensionName) {
+    /**
+     *  {'Source' : [], 'Sector' : []}
+     */
+    return function(values) {
+      var spec = {};
+      spec[dimensionName] = {$set: values};
+      var newState = update(this.state.dimensionFilter, spec);
+      this.blankSearch();
+      this.setState({dimensionFilter: newState});
+    }.bind(this);
+  },
 
-	tagListValues: function() {
-		var mapFunc = function(){};
+  tagListValues: function() {
+    var mapFunc = function(){};
 
-		if (this.props.optionsByValue) {
-			mapFunc = function(val){
-				return this.props.optionsByValue[val];
-			};
-		} else {
-			mapFunc = function(val){
-			  return this.props.options.filter(function(opt){
-					return opt.value === val;
-				})[0];
-			};
-		}
+    if (this.props.optionsByValue) {
+      mapFunc = function(val){
+        return this.props.optionsByValue[val];
+      };
+    } else {
+      mapFunc = function(val){
+        return this.props.options.filter(function(opt){
+          return opt.value === val;
+        })[0];
+      };
+    }
 
-		return this.props.values.map(mapFunc, this);
-	},
+    return this.props.values.map(mapFunc, this);
+  },
 
-	getSkylight: function() {
-		if (!this.isMobile()) {
-			return null;
-		}
+  getSkylight: function() {
+    if (!this.isMobile()) {
+      return null;
+    }
 
-		return (
-			<SkyLight
-				ref='tooltip'
-				title={this.state.mobileTooltipTitle}
-				className='mobile-tooltip'>
-				{this.state.mobileTooltipContent}
-			</SkyLight>
-		);
-	},
+    return (
+      <SkyLight
+        ref='tooltip'
+        title={this.state.mobileTooltipTitle}
+        className='mobile-tooltip'>
+        {this.state.mobileTooltipContent}
+      </SkyLight>
+    );
+  },
 
-	getSelectFilters: function() {
-		return this.props.filterDimensions.map(function(dim) {
-			var groupByKey = '';
-			if(dim.groupByKey)
-				groupByKey = dim.groupByKey;
+  getSelectFilters: function() {
+    return this.props.filterDimensions.map(function(dim) {
+      var groupByKey = '';
+      if(dim.groupByKey)
+        groupByKey = dim.groupByKey;
 
-			return (<ReactCompactMultiselect
-						key={dim.name}
-						label={dim.name}
-						options={dim.options}
-						info={dim.info}
-						initialValue={[]}
-						groupBy={groupByKey}
-						onChange={this.generateUpdateDimensionFilter(dim.name)}
-						layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
-		}, this);
-	},
+      return (<ReactCompactMultiselect
+            key={dim.name}
+            label={dim.name}
+            options={dim.options}
+            info={dim.info}
+            initialValue={[]}
+            groupBy={groupByKey}
+            onChange={this.generateUpdateDimensionFilter(dim.name)}
+            layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
+    }, this);
+  },
 
-	render: function() {
-		var filteredOptions = this.filteredOptions();
-		var selectFilters = this.getSelectFilters();
-		var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
+  render: function() {
+    var filteredOptions = this.filteredOptions();
+    var selectFilters = this.getSelectFilters();
+    var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
 
-		return (
-			<div className='react-xzibit-select'>
-				<div className='fluid-layout'>
-					<div className='header'>
-						<div className='rxs-label-filter'>
-							<div className='rsv-label-filter-container'>
-							<input
-								onChange={this.updateLabelFilter}
-								value={this.state.labelFilter}
-								placeholder={this.props.placeholderText} />
-							<button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearLabelFilter}>&#215;</button>
-							</div>
-						</div>
-						<TagList
-							values={this.tagListValues()}
-							onRemove={this.removeValue}
-							removeAll={this.removeAll}
-							placeholderText='&nbsp;'
-							collapsedRows={1} />
-					</div>
-					<OptionList
-						options={filteredOptions}
-						onClick={this.addValue}
-						addAll={addAll}
-						addAllFunc={this.addAllFunc}
-						onMobileTooltip={this.onMobileTooltip}/>
-					<div className='footer'>
-						<div className='filter-multiselect'>
-						{selectFilters}
-						</div>
-					</div>
-				</div>
-				{this.getSkylight()}
-			</div>
-		);
-	}
+    return (
+      <div className='react-xzibit-select'>
+        <div className='fluid-layout'>
+          <div className='header'>
+            <div className='rxs-label-filter'>
+              <div className='rsv-label-filter-container'>
+              <input
+                onChange={this.updateLabelFilter}
+                value={this.state.labelFilter}
+                placeholder={this.props.placeholderText} />
+              <button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearLabelFilter}>&#215;</button>
+              </div>
+            </div>
+            <TagList
+              values={this.tagListValues()}
+              onRemove={this.removeValue}
+              removeAll={this.removeAll}
+              placeholderText='&nbsp;'
+              collapsedRows={1} />
+          </div>
+          <OptionList
+            options={filteredOptions}
+            onClick={this.addValue}
+            addAll={addAll}
+            addAllFunc={this.addAllFunc}
+            onMobileTooltip={this.onMobileTooltip}/>
+          <div className='footer'>
+            <div className='filter-multiselect'>
+            {selectFilters}
+            </div>
+          </div>
+        </div>
+        {this.getSkylight()}
+      </div>
+    );
+  }
 });
 
 module.exports = XzibitSelect;

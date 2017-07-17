@@ -1,290 +1,290 @@
 .font {font-family: Arial, Helvetica, sans-serif;}
 .user-select {
-	-webkit-user-select: none;  /* Chrome all / Safari all */
-	-moz-user-select: none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
 
-	/* No support for these yet, use at own risk */
-	-o-user-select: none;
-	user-select: none;
+  /* No support for these yet, use at own risk */
+  -o-user-select: none;
+  user-select: none;
 }
 
 
 //fixes height issue for doctype html
 html, body, #main {height:100%;margin:0;}
 #main {
-	box-sizing:border-box;
-	padding:8px;
+  box-sizing:border-box;
+  padding:8px;
 
-	& > div {height:100%;}
+  & > div {height:100%;}
 }
 
 
 .react-xzibit-select {
-	overflow: hidden;
-	width: 100%;
-	height: 100%;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 
-	& > .fluid-layout {
-		width:100%;
-		height:100%;
-		display: table;
+  & > .fluid-layout {
+    width:100%;
+    height:100%;
+    display: table;
 
-		& > div.header {display: table-row; height:1px;}
-		& > div.content {display: table; height:100%; width:100%;}
-		& > div.footer {display: table-row; height:1px;}
-		.overflow-y {
-			width: 100%;
-			height: 100%;
-			position:relative;
+    & > div.header {display: table-row; height:1px;}
+    & > div.content {display: table; height:100%; width:100%;}
+    & > div.footer {display: table-row; height:1px;}
+    .overflow-y {
+      width: 100%;
+      height: 100%;
+      position:relative;
 
-			&.rsx-SizeBox {
-				overflow: hidden; //overflow added to child
-				display: table-cell;
-			}
-		}
-	}
+      &.rsx-SizeBox {
+        overflow: hidden; //overflow added to child
+        display: table-cell;
+      }
+    }
+  }
 
-	.header {background:linear-gradient(#f0f0f0, #f6f6f6);}
-	.footer {background: linear-gradient(#f9f9f9, #efefef);}
+  .header {background:linear-gradient(#f0f0f0, #f6f6f6);}
+  .footer {background: linear-gradient(#f9f9f9, #efefef);}
 
-	.react-tag-list {
-		border-bottom: 3px double #ccc;
+  .react-tag-list {
+    border-bottom: 3px double #ccc;
 
-		.rtl-tags {
-			margin:0;
-			min-height:auto;
-		}
-	}
+    .rtl-tags {
+      margin:0;
+      min-height:auto;
+    }
+  }
 
-	.custom-option-tag {
-		display: inline;
-		margin-left: 10px;
-		border: 1px solid gold;
-		border-radius: 2px;
-		color: yellow;
-		font-size: 10px;
-		padding: 2px 4px;
+  .custom-option-tag {
+    display: inline;
+    margin-left: 10px;
+    border: 1px solid gold;
+    border-radius: 2px;
+    color: yellow;
+    font-size: 10px;
+    padding: 2px 4px;
 
-		&:hover{
-			background: rgba(220, 220, 72, 0.25);
-		}
-	}
+    &:hover{
+      background: rgba(220, 220, 72, 0.25);
+    }
+  }
 
-	.react-compact-multiselect {
-		float: left;
-		margin-bottom: 8px;
-		width: 48%;
+  .react-compact-multiselect {
+    float: left;
+    margin-bottom: 8px;
+    width: 48%;
 
-		.rcm-menu {
-			.deselect-all,
-			.select-all {
-				max-width: none;
-			}
-		}
+    .rcm-menu {
+      .deselect-all,
+      .select-all {
+        max-width: none;
+      }
+    }
 
-		.react-drop-button {
-			width: 100%;
-			.drop-box-content {min-height:200px;}
-			.rdb-button {
-				width: 100%;
-				text-align: left;
+    .react-drop-button {
+      width: 100%;
+      .drop-box-content {min-height:200px;}
+      .rdb-button {
+        width: 100%;
+        text-align: left;
 
-				//creates the drop arrow, more styling could be done for :hover/focus and :active
-				&:before {
-					position: absolute;
-					top: 0;
-					right: 0;
-					width: 2em;
-					height: 100%;
-					background-color: #dfdfdf;
-					border-radius: 0 3px 3px 0px;
-					content: " ";
-					border-left: 1px solid #d9d9d9;
-					box-shadow: inset 1px 1px 0px 0px rgba(255,255,255,.3), inset -1px -1px 0px 0px rgba(180,180,180,.1);
-				}
-				&:after {
-					position: absolute;
-					content: " ";
-					top: 0.7em;
-					right: .5em;
-					border-bottom: .5em solid #bbb;
-					border-right: .5em solid transparent;
-					border-left: .5em solid transparent;
-				}
-			}
-		}
-		.fluid-layout .overflow-y {min-height:64px;}
-	}
+        //creates the drop arrow, more styling could be done for :hover/focus and :active
+        &:before {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 2em;
+          height: 100%;
+          background-color: #dfdfdf;
+          border-radius: 0 3px 3px 0px;
+          content: " ";
+          border-left: 1px solid #d9d9d9;
+          box-shadow: inset 1px 1px 0px 0px rgba(255,255,255,.3), inset -1px -1px 0px 0px rgba(180,180,180,.1);
+        }
+        &:after {
+          position: absolute;
+          content: " ";
+          top: 0.7em;
+          right: .5em;
+          border-bottom: .5em solid #bbb;
+          border-right: .5em solid transparent;
+          border-left: .5em solid transparent;
+        }
+      }
+    }
+    .fluid-layout .overflow-y {min-height:64px;}
+  }
 
-	.filter-multiselect {
-		width: 100%;
-		min-height: 2em;
-		padding: 10px 8px 0;
-		border-top: 3px double #ccc;
-		box-sizing: border-box;
+  .filter-multiselect {
+    width: 100%;
+    min-height: 2em;
+    padding: 10px 8px 0;
+    border-top: 3px double #ccc;
+    box-sizing: border-box;
 
-		.react-compact-multiselect + .react-compact-multiselect {
-			float:right;
+    .react-compact-multiselect + .react-compact-multiselect {
+      float:right;
 
-			.react-drop-button.align-content-ne .rdb-drop-box {//align-content-nw styles
-				transform-origin: 98% 98%;
-				bottom: 100%;
-				border-radius: 3px 3px 1px 1px;
-				right: 0;
+      .react-drop-button.align-content-ne .rdb-drop-box {//align-content-nw styles
+        transform-origin: 98% 98%;
+        bottom: 100%;
+        border-radius: 3px 3px 1px 1px;
+        right: 0;
 
-				&:before {left:auto;right:12px;}
-				&:after {left:auto;right: 11px;}
-			}
-		}
-		.rdb-drop-box {
-			min-width: 100%;
-			min-height: 36vh;
-			max-height: 74vh;
-			margin-bottom: 8px;
+        &:before {left:auto;right:12px;}
+        &:after {left:auto;right: 11px;}
+      }
+    }
+    .rdb-drop-box {
+      min-width: 100%;
+      min-height: 36vh;
+      max-height: 74vh;
+      margin-bottom: 8px;
 
-			//creates the tail on the drop-box content
-			&:before {
-				border: inset 7px;
-				content: "";
-				display: block;
-				height: 0;
-				width: 0;
-				border-color: #F5F5F5 transparent transparent transparent;
-				border-top-style: solid;
-				position: absolute;
-				bottom: -14px;
-				left: 12px;
-				z-index: 98;
-			}
-			&:after {
-				border: inset 8px;
-				content: "";
-				display: block;
-				height: 0;
-				width: 0;
-				border-color: #cacaca transparent transparent transparent;
-				border-top-style: solid;
-				position: absolute;
-				bottom: -16px;
-				left: 11px;
-				z-index: 97;
-			}
-		}
-	}
+      //creates the tail on the drop-box content
+      &:before {
+        border: inset 7px;
+        content: "";
+        display: block;
+        height: 0;
+        width: 0;
+        border-color: #F5F5F5 transparent transparent transparent;
+        border-top-style: solid;
+        position: absolute;
+        bottom: -14px;
+        left: 12px;
+        z-index: 98;
+      }
+      &:after {
+        border: inset 8px;
+        content: "";
+        display: block;
+        height: 0;
+        width: 0;
+        border-color: #cacaca transparent transparent transparent;
+        border-top-style: solid;
+        position: absolute;
+        bottom: -16px;
+        left: 11px;
+        z-index: 97;
+      }
+    }
+  }
 
-	.rxs-label-filter {
-		clear: both;
-		padding: 8px 8px 0;
+  .rxs-label-filter {
+    clear: both;
+    padding: 8px 8px 0;
 
-		.rsv-label-filter-container {position:relative;}
+    .rsv-label-filter-container {position:relative;}
 
-		input {
-			width: 100%;
-			padding: .08em .2em .1em .2em;
-			font-size: 1em;
-			font-weight: 100;
-			line-height: 1.8em;
-			box-sizing:border-box;
+    input {
+      width: 100%;
+      padding: .08em .2em .1em .2em;
+      font-size: 1em;
+      font-weight: 100;
+      line-height: 1.8em;
+      box-sizing:border-box;
 
-			&::-webkit-input-placeholder {
-			   font-size:.8em;
-			   line-height: 2.25;
-			   text-indent: .2em;
-			   font-weight: 100;
-			   font-style: italic;
-			}
+      &::-webkit-input-placeholder {
+         font-size:.8em;
+         line-height: 2.25;
+         text-indent: .2em;
+         font-weight: 100;
+         font-style: italic;
+      }
 
-			&::-moz-placeholder {  // Firefox 19+
-			   font-size:.8em;
-			   line-height: 2.25;
-			   text-indent: .2em;
-			   font-weight: 100;
-			   font-style: italic;
-			}
+      &::-moz-placeholder {  // Firefox 19+
+         font-size:.8em;
+         line-height: 2.25;
+         text-indent: .2em;
+         font-weight: 100;
+         font-style: italic;
+      }
 
-			&:-ms-input-placeholder {
-			   font-size:.8em;
-			   line-height: 2.25;
-			   text-indent: .2em;
-			   font-weight: 100;
-			   font-style: italic;
-			}
-		}
-		.rxs-label-filter-clear {
-			position: absolute;
-			cursor: pointer;
-			top: 0;
-			right: 0;
-			padding: 0em .7em;
-			border: 0;
-			background: transparent;
-			font-size: 1em;
-			height: 100%;
-			line-height: 1px;
-		}
-	}
-	.rxs-option-list {
-		margin: 0;
-		padding: 0;
-		list-style-type: none;
+      &:-ms-input-placeholder {
+         font-size:.8em;
+         line-height: 2.25;
+         text-indent: .2em;
+         font-weight: 100;
+         font-style: italic;
+      }
+    }
+    .rxs-label-filter-clear {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      right: 0;
+      padding: 0em .7em;
+      border: 0;
+      background: transparent;
+      font-size: 1em;
+      height: 100%;
+      line-height: 1px;
+    }
+  }
+  .rxs-option-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 
-		&.rsx-lazyRender {
-			position: absolute;
-			width: 100%;
-			//height: 100% !important; produced bug in IE10
-		}
+    &.rsx-lazyRender {
+      position: absolute;
+      width: 100%;
+      //height: 100% !important; produced bug in IE10
+    }
 
-		.rxs-option-list-item {
-			margin: 5px 4px;
+    .rxs-option-list-item {
+      margin: 5px 4px;
 
-			&.add-all {
-				.rxs-option-button {
-					background-color: rgb(135, 218, 135);
-				}
-			}
-		}
+      &.add-all {
+        .rxs-option-button {
+          background-color: rgb(135, 218, 135);
+        }
+      }
+    }
 
-		.rxs-option-button {
-			@extend .font;
-			@extend .user-select;
-			background-color: #dbeff9;
-			position: relative;
-			font-size: 1em;
-			line-height: 1;
-			cursor: pointer;
-			border: 0;
-			width: 100%;
-			text-align: left;
-			box-sizing:border-box;
+    .rxs-option-button {
+      @extend .font;
+      @extend .user-select;
+      background-color: #dbeff9;
+      position: relative;
+      font-size: 1em;
+      line-height: 1;
+      cursor: pointer;
+      border: 0;
+      width: 100%;
+      text-align: left;
+      box-sizing:border-box;
 
-			.rxs-option-button-click {
-				padding: 10px 2.4em 10px .4em;
-			}
+      .rxs-option-button-click {
+        padding: 10px 2.4em 10px .4em;
+      }
 
-			&:hover {
-				background-color: #e3f3fb;
-				box-shadow: inset 0 0 1px 0 rgba(120, 120, 120, 0.4);
-			}
+      &:hover {
+        background-color: #e3f3fb;
+        box-shadow: inset 0 0 1px 0 rgba(120, 120, 120, 0.4);
+      }
 
-			.hover-icon {
-				background-color: #6BC4D0;
-				color: white;
-				border-radius: 1.6em;
-				position: absolute;
-				top: .4em;
-				right: 10px;
-				width: 1.6em;
-				height: 1.58em;
-				text-align: center;
-				line-height: 1.6em;
+      .hover-icon {
+        background-color: #6BC4D0;
+        color: white;
+        border-radius: 1.6em;
+        position: absolute;
+        top: .4em;
+        right: 10px;
+        width: 1.6em;
+        height: 1.58em;
+        text-align: center;
+        line-height: 1.6em;
 
-				&:hover {
-					background-color: #67B0BA;
-				}
-			}
-		}
-	}
+        &:hover {
+          background-color: #67B0BA;
+        }
+      }
+    }
+  }
 }
 
 .opentip-container.style-rxs-tooltip .opentip{
@@ -294,5 +294,5 @@ html, body, #main {height:100%;margin:0;}
 }
 
 @media only screen and (max-width: 500px) {
-	.react-xzibit-select .filter-multiselect .rdb-drop-box {min-width: 180%;}
+  .react-xzibit-select .filter-multiselect .rdb-drop-box {min-width: 180%;}
 }
