@@ -40,6 +40,7 @@ var XzibitSelect = React.createClass({
     return {
       addAll: true,
       filterChangeThrotleMs: 200,
+      initialFilter: '',
       placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
