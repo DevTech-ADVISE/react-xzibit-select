@@ -13,7 +13,7 @@ require('./react-xzibit-select.scss');
 var XzibitSelect = React.createClass({
   getInitialState: function() {
     return {
-      labelFilter: '',
+      labelFilter: this.props.initialFilter,
       dimensionFilter: {},
       mobileTooltipContent: null,
       mobileTooltipTitle: null
@@ -25,6 +25,7 @@ var XzibitSelect = React.createClass({
     addAllLimit: types.number,
     filterChangeThrotleMs: types.number,
     filterDimensions: types.array,
+    initialFilter: types.string,
     onChange: types.func,
     options: types.array,
     optionsByValue: types.any,
