@@ -68,6 +68,7 @@ var DemoXzibitSelect = React.createClass({
 					options={this.options()}
 					values={this.state.values}
 					onChange={this.onChange}
+					initialFilter='melon'
 					filterDimensions={this.filterDimensions()}/>
 			</div>
 		);
