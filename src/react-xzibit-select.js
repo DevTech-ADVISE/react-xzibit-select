@@ -14,7 +14,7 @@ var XzibitSelect = React.createClass({
   getInitialState: function() {
     return {
       labelFilter: this.props.initialFilter,
-      dimensionFilter: {},
+      dimensionFilter: this.props.initialDimensionFilter,
       mobileTooltipContent: null,
       mobileTooltipTitle: null
     };
@@ -25,6 +25,7 @@ var XzibitSelect = React.createClass({
     addAllLimit: types.number,
     filterChangeThrotleMs: types.number,
     filterDimensions: types.array,
+    initialDimensionFilter: types.object,
     initialFilter: types.string,
     onChange: types.func,
     options: types.array,
@@ -40,6 +41,7 @@ var XzibitSelect = React.createClass({
     return {
       addAll: true,
       filterChangeThrotleMs: 200,
+      initialDimensionFilter: {},
       initialFilter: '',
       placeholderText: 'Type here to filter options',
       openTipOptions: {
@@ -204,7 +206,6 @@ var XzibitSelect = React.createClass({
     }
 
     var retVal = true;
-
     var filterHits = this.props.filterDimensions.map(function(dimension){
       var key = dimension.key;
       var name = dimension.name;
@@ -300,12 +301,14 @@ var XzibitSelect = React.createClass({
       if(dim.groupByKey)
         groupByKey = dim.groupByKey;
 
+      const initialValue = this.props.initialDimensionFilter[dim.name] || []
+
       return (<ReactCompactMultiselect
             key={dim.name}
             label={dim.name}
             options={dim.options}
             info={dim.info}
-            initialValue={[]}
+            initialValue={initialValue}
             groupBy={groupByKey}
             onChange={this.generateUpdateDimensionFilter(dim.name)}
             layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
