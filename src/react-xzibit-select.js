@@ -1,6 +1,7 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
 var update = require('react-addons-update');
-var types = React.PropTypes;
+var types = require('prop-types');
 var OptionList = require('./components/option-list');
 var ReactCompactMultiselect = require('react-compact-multiselect');
 var TagList = require('react-tag-list');
@@ -10,7 +11,7 @@ var lunr = require('lunr')
 
 require('./react-xzibit-select.scss');
 
-var XzibitSelect = React.createClass({
+var XzibitSelect = createReactClass({
   getInitialState: function() {
     return {
       labelFilter: this.props.initialFilter,

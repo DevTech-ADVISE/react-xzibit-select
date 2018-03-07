@@ -1,10 +1,11 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
 var Opentip = require('opentip');
 var classes = require('classnames');
 var IsMobileMixin = require('react-ismobile-mixin');
 require('opentip/css/opentip.css');
 
-var OptionListItem = React.createClass({
+var OptionListItem = createReactClass({
   // propTypes: {
   //   label: types.any,
   //   value: types.any,

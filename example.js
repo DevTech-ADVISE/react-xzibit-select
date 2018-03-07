@@ -1,11 +1,12 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 var XzibitSelect = require('./src/react-xzibit-select');
 var testData = require('./src/test-data');
 var _ = require('lodash');
 
 
-var DemoXzibitSelect = React.createClass({
+var DemoXzibitSelect = createReactClass({
 	getInitialState: function(){
 		return {
 			values: []

@@ -1,11 +1,12 @@
 var React = require('react');
-var types = React.PropTypes;
+var createReactClass = require('create-react-class');
+var types = require('prop-types');
 var OptionListItem = require('./option-list-item');
 var LazyRender = require('react-lazy-render');
 var ReactSizeBox = require('react-sizebox');
 var classes = require('classnames');
 
-var OptionList = React.createClass({
+var OptionList = createReactClass({
   propTypes: {
     options: types.array,
     onClick: types.func,
