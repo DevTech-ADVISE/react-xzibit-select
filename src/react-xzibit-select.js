@@ -14,8 +14,6 @@ require('./react-xzibit-select.scss');
 var XzibitSelect = createReactClass({
   getInitialState: function() {
     return {
-      labelFilter: this.props.initialFilter,
-      dimensionFilter: this.props.initialDimensionFilter,
       mobileTooltipContent: null,
       mobileTooltipTitle: null
     };
@@ -26,9 +24,10 @@ var XzibitSelect = createReactClass({
     addAllLimit: types.number,
     filterChangeThrotleMs: types.number,
     filterDimensions: types.array,
-    initialDimensionFilter: types.object,
-    initialFilter: types.string,
+    dimensionFilterSelections: types.object,
+    searchFilterValue: types.string,
     onChange: types.func,
+    onDimensionSelectionChange: types.func,
     options: types.array,
     optionsByValue: types.any,
     refField: types.string,
@@ -42,8 +41,8 @@ var XzibitSelect = createReactClass({
     return {
       addAll: true,
       filterChangeThrotleMs: 200,
-      initialDimensionFilter: {},
-      initialFilter: '',
+      dimensionFilterSelections: {},
+      searchFilterValue: '',
       placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
@@ -164,21 +163,21 @@ var XzibitSelect = createReactClass({
   },
 
   filteredOptions: function() {
-    var labelFilter = this.state.labelFilter.toLowerCase()
-    if(!labelFilter) {
+    var searchFilterValue = this.props.searchFilterValue.toLowerCase()
+    if(!searchFilterValue) {
       return this.getAvailableOptions(this.props.options)
     }
 
     // lunr doesn't filter on a or i
-    if(labelFilter === 'a' || labelFilter === 'i') {
+    if(searchFilterValue === 'a' || searchFilterValue === 'i') {
       return this.getAvailableOptions(this.props.options)
     }
 
-    var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase())
+    var lunrResults = this.getSearch().search(searchFilterValue.toLowerCase())
       .map(function(result) {
         return result.ref
       })
-    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase())
+    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase())
     var mergedResults = this.mergeResults(lunrResults, substringResults)
     var optionMap = {}
     this.props.options.forEach(function (opt) {
@@ -202,7 +201,7 @@ var XzibitSelect = createReactClass({
   },
 
   dimensionFilterIncludes: function(opt) {
-    if (Object.keys(this.state.dimensionFilter).length < 1){
+    if (Object.keys(this.props.dimensionFilterSelections).length < 1){
       return true;
     }
 
@@ -210,7 +209,7 @@ var XzibitSelect = createReactClass({
     var filterHits = this.props.filterDimensions.map(function(dimension){
       var key = dimension.key;
       var name = dimension.name;
-      var filterVals = this.state.dimensionFilter[name];
+      var filterVals = this.props.dimensionFilterSelections[name];
       if (filterVals === undefined || filterVals.length < 1) {
         return true;
       }
@@ -239,15 +238,13 @@ var XzibitSelect = createReactClass({
     return retVal;
   },
 
-
-
-  updateLabelFilter: function(event) {
+  updateSearchFilter: function(event) {
     // TODO: add throttling
-    this.setState({labelFilter: event.target.value});
+    this.props.onSearchFilterChange(event.target.value)
   },
 
-  clearLabelFilter: function() {
-    this.setState({labelFilter: ''});
+  clearSearchFilter: function() {
+    this.props.onClearSearchFilter()
   },
 
   generateUpdateDimensionFilter: function(dimensionName) {
@@ -255,11 +252,8 @@ var XzibitSelect = createReactClass({
      *  {'Source' : [], 'Sector' : []}
      */
     return function(values) {
-      var spec = {};
-      spec[dimensionName] = {$set: values};
-      var newState = update(this.state.dimensionFilter, spec);
       this.blankSearch();
-      this.setState({dimensionFilter: newState});
+      this.props.onDimensionSelectionChange(dimensionName, values)
     }.bind(this);
   },
 
@@ -302,7 +296,7 @@ var XzibitSelect = createReactClass({
       if(dim.groupByKey)
         groupByKey = dim.groupByKey;
 
-      const initialValue = this.props.initialDimensionFilter[dim.name] || []
+      const initialValue = this.props.dimensionFilterSelections[dim.name] || []
 
       return (<ReactCompactMultiselect
             key={dim.name}
@@ -328,10 +322,10 @@ var XzibitSelect = createReactClass({
             <div className='rxs-label-filter'>
               <div className='rsv-label-filter-container'>
               <input
-                onChange={this.updateLabelFilter}
-                value={this.state.labelFilter}
+                onChange={this.updateSearchFilter}
+                value={this.props.searchFilterValue}
                 placeholder={this.props.placeholderText} />
-              <button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearLabelFilter}>&#215;</button>
+              <button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearSearchFilter}>&#215;</button>
               </div>
             </div>
             <TagList
@@ -359,4 +353,4 @@ var XzibitSelect = createReactClass({
   }
 });
 
-module.exports = XzibitSelect;
+module.exports =  XzibitSelect
