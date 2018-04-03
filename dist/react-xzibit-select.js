@@ -72,8 +72,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  getInitialState: function () {
 	    return {
-	      labelFilter: this.props.initialFilter,
-	      dimensionFilter: this.props.initialDimensionFilter,
 	      mobileTooltipContent: null,
 	      mobileTooltipTitle: null
 	    };
@@ -83,10 +81,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    addAll: types.bool,
 	    addAllLimit: types.number,
 	    filterChangeThrotleMs: types.number,
-	    filterDimensions: types.array,
-	    initialDimensionFilter: types.object,
-	    initialFilter: types.string,
-	    onChange: types.func,
+	    filterDimensionOptions: types.array,
+	    dimensionFilters: types.object,
+	    searchFilterValue: types.string,
+	    onDimensionSelectionChange: types.func,
+	    onDimensionFilterValueChange: types.func,
+	    onClearDimensionFilterValue: types.func,
 	    options: types.array,
 	    optionsByValue: types.any,
 	    refField: types.string,
@@ -100,8 +100,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return {
 	      addAll: true,
 	      filterChangeThrotleMs: 200,
-	      initialDimensionFilter: {},
-	      initialFilter: '',
+	      dimensionFilters: {},
+	      searchFilterValue: '',
 	      placeholderText: 'Type here to filter options',
 	      openTipOptions: {
 	        offset: [3, 10],
@@ -225,20 +225,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  filteredOptions: function () {
-	    var labelFilter = this.state.labelFilter.toLowerCase();
-	    if (!labelFilter) {
+	    var searchFilterValue = this.props.searchFilterValue.toLowerCase();
+	    if (!searchFilterValue) {
 	      return this.getAvailableOptions(this.props.options);
 	    }
 
 	    // lunr doesn't filter on a or i
-	    if (labelFilter === 'a' || labelFilter === 'i') {
+	    if (searchFilterValue === 'a' || searchFilterValue === 'i') {
 	      return this.getAvailableOptions(this.props.options);
 	    }
 
-	    var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase()).map(function (result) {
+	    var lunrResults = this.getSearch().search(searchFilterValue.toLowerCase()).map(function (result) {
 	      return result.ref;
 	    });
-	    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase());
+	    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase());
 	    var mergedResults = this.mergeResults(lunrResults, substringResults);
 	    var optionMap = {};
 	    this.props.options.forEach(function (opt) {
@@ -260,15 +260,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  dimensionFilterIncludes: function (opt) {
-	    if (Object.keys(this.state.dimensionFilter).length < 1) {
+	    if (Object.keys(this.props.dimensionFilters).length < 1) {
 	      return true;
 	    }
 
 	    var retVal = true;
-	    var filterHits = this.props.filterDimensions.map(function (dimension) {
+	    var filterHits = this.props.filterDimensionOptions.map(function (dimension) {
 	      var key = dimension.key;
 	      var name = dimension.name;
-	      var filterVals = this.state.dimensionFilter[name];
+	      var filterVals = this.props.dimensionFilters[name] ? this.props.dimensionFilters[name].selectedValues : undefined;
 	      if (filterVals === undefined || filterVals.length < 1) {
 	        return true;
 	      }
@@ -297,25 +297,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return retVal;
 	  },
 
-	  updateLabelFilter: function (event) {
+	  updateSearchFilter: function (event) {
 	    // TODO: add throttling
-	    this.setState({ labelFilter: event.target.value });
+	    this.props.onSearchFilterChange(event.target.value);
 	  },
 
-	  clearLabelFilter: function () {
-	    this.setState({ labelFilter: '' });
+	  clearSearchFilter: function () {
+	    this.props.onClearSearchFilter();
 	  },
 
-	  generateUpdateDimensionFilter: function (dimensionName) {
+	  generateUpdateDimensionSelection: function (dimensionName) {
 	    /**
 	     *  {'Source' : [], 'Sector' : []}
 	     */
 	    return function (values) {
-	      var spec = {};
-	      spec[dimensionName] = { $set: values };
-	      var newState = update(this.state.dimensionFilter, spec);
 	      this.blankSearch();
-	      this.setState({ dimensionFilter: newState });
+	      this.props.onDimensionSelectionChange(dimensionName, values);
+	    }.bind(this);
+	  },
+
+	  generateUpdateDimensionFilterValue: function (dimensionName) {
+	    return function (value) {
+	      this.props.onDimensionFilterValueChange(dimensionName, value);
+	    }.bind(this);
+	  },
+
+	  generateClearDimensionFilterValue: function (dimensionName) {
+	    return function (value) {
+	      this.props.onClearDimensionFilterValue(dimensionName);
 	    }.bind(this);
 	  },
 
@@ -353,20 +362,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  getSelectFilters: function () {
-	    return this.props.filterDimensions.map(function (dim) {
+	    return this.props.filterDimensionOptions.map(function (dim) {
 	      var groupByKey = '';
 	      if (dim.groupByKey) groupByKey = dim.groupByKey;
 
-	      const initialValue = this.props.initialDimensionFilter[dim.name] || [];
+	      const dimensionFilter = this.props.dimensionFilters[dim.name] || {};
+	      const selectedValuesForDimension = dimensionFilter.selectedValues || [];
+	      const filterValueForDimension = dimensionFilter.filterValue || '';
 
 	      return React.createElement(ReactCompactMultiselect, {
 	        key: dim.name,
 	        label: dim.name,
 	        options: dim.options,
 	        info: dim.info,
-	        initialValue: initialValue,
+	        selectedValues: selectedValuesForDimension,
+	        onSelectionChange: this.generateUpdateDimensionSelection(dim.name),
+	        filterValue: filterValueForDimension,
+	        onFilterValueChange: this.generateUpdateDimensionFilterValue(dim.name),
+	        onClearFilter: this.generateClearDimensionFilterValue(dim.name),
 	        groupBy: groupByKey,
-	        onChange: this.generateUpdateDimensionFilter(dim.name),
 	        layoutMode: ReactCompactMultiselect.ALIGN_CONTENT_NE });
 	    }, this);
 	  },
@@ -392,12 +406,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	              'div',
 	              { className: 'rsv-label-filter-container' },
 	              React.createElement('input', {
-	                onChange: this.updateLabelFilter,
-	                value: this.state.labelFilter,
+	                onChange: this.updateSearchFilter,
+	                value: this.props.searchFilterValue,
 	                placeholder: this.props.placeholderText }),
 	              React.createElement(
 	                'button',
-	                { className: 'rxs-label-filter-clear', name: 'clear-filter', onClick: this.clearLabelFilter },
+	                { className: 'rxs-label-filter-clear', name: 'clear-filter', onClick: this.clearSearchFilter },
 	                '\xD7'
 	              )
 	            )

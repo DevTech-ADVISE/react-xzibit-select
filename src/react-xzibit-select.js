@@ -23,11 +23,12 @@ var XzibitSelect = createReactClass({
     addAll: types.bool,
     addAllLimit: types.number,
     filterChangeThrotleMs: types.number,
-    filterDimensions: types.array,
-    dimensionFilterSelections: types.object,
+    filterDimensionOptions: types.array,
+    dimensionFilters: types.object,
     searchFilterValue: types.string,
-    onChange: types.func,
     onDimensionSelectionChange: types.func,
+    onDimensionFilterValueChange: types.func,
+    onClearDimensionFilterValue: types.func,
     options: types.array,
     optionsByValue: types.any,
     refField: types.string,
@@ -41,7 +42,7 @@ var XzibitSelect = createReactClass({
     return {
       addAll: true,
       filterChangeThrotleMs: 200,
-      dimensionFilterSelections: {},
+      dimensionFilters: {},
       searchFilterValue: '',
       placeholderText: 'Type here to filter options',
       openTipOptions: {
@@ -201,15 +202,15 @@ var XzibitSelect = createReactClass({
   },
 
   dimensionFilterIncludes: function(opt) {
-    if (Object.keys(this.props.dimensionFilterSelections).length < 1){
+    if (Object.keys(this.props.dimensionFilters).length < 1){
       return true;
     }
 
     var retVal = true;
-    var filterHits = this.props.filterDimensions.map(function(dimension){
+    var filterHits = this.props.filterDimensionOptions.map(function(dimension){
       var key = dimension.key;
       var name = dimension.name;
-      var filterVals = this.props.dimensionFilterSelections[name];
+      var filterVals = (this.props.dimensionFilters[name]) ? this.props.dimensionFilters[name].selectedValues : undefined
       if (filterVals === undefined || filterVals.length < 1) {
         return true;
       }
@@ -247,7 +248,7 @@ var XzibitSelect = createReactClass({
     this.props.onClearSearchFilter()
   },
 
-  generateUpdateDimensionFilter: function(dimensionName) {
+  generateUpdateDimensionSelection: function(dimensionName) {
     /**
      *  {'Source' : [], 'Sector' : []}
      */
@@ -255,6 +256,18 @@ var XzibitSelect = createReactClass({
       this.blankSearch();
       this.props.onDimensionSelectionChange(dimensionName, values)
     }.bind(this);
+  },
+
+  generateUpdateDimensionFilterValue: function(dimensionName) {
+    return function(value) {
+      this.props.onDimensionFilterValueChange(dimensionName, value)
+    }.bind(this)
+  },
+
+  generateClearDimensionFilterValue: function(dimensionName) {
+    return function(value) {
+      this.props.onClearDimensionFilterValue(dimensionName)
+    }.bind(this)
   },
 
   tagListValues: function() {
@@ -291,21 +304,26 @@ var XzibitSelect = createReactClass({
   },
 
   getSelectFilters: function() {
-    return this.props.filterDimensions.map(function(dim) {
+    return this.props.filterDimensionOptions.map(function(dim) {
       var groupByKey = '';
       if(dim.groupByKey)
         groupByKey = dim.groupByKey;
 
-      const initialValue = this.props.dimensionFilterSelections[dim.name] || []
+      const dimensionFilter = this.props.dimensionFilters[dim.name] || {}
+      const selectedValuesForDimension = dimensionFilter.selectedValues || []
+      const filterValueForDimension = dimensionFilter.filterValue || ''
 
       return (<ReactCompactMultiselect
             key={dim.name}
             label={dim.name}
             options={dim.options}
             info={dim.info}
-            initialValue={initialValue}
+            selectedValues={selectedValuesForDimension}
+            onSelectionChange={this.generateUpdateDimensionSelection(dim.name)}
+            filterValue={filterValueForDimension}
+            onFilterValueChange={this.generateUpdateDimensionFilterValue(dim.name)}
+            onClearFilter={this.generateClearDimensionFilterValue(dim.name)}
             groupBy={groupByKey}
-            onChange={this.generateUpdateDimensionFilter(dim.name)}
             layoutMode={ReactCompactMultiselect.ALIGN_CONTENT_NE} />);
     }, this);
   },
@@ -353,4 +371,4 @@ var XzibitSelect = createReactClass({
   }
 });
 
-module.exports =  XzibitSelect
+module.exports = XzibitSelect
