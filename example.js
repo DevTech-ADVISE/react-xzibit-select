@@ -77,6 +77,9 @@ var DemoXzibitSelect = createReactClass({
     newDimensionFilters[dimensionName] = { selectedValues: currentDimensionSelection, filterValue: value }
     this.setState({ dimensionFilters: newDimensionFilters })
   },
+  onClearDimensionFilterValue: function(dimensionName) {
+    this.onDimensionFilterValueChange(dimensionName, '')
+  },
   render: function() {
     //var divStyles = {height: 600, width: 800, border: '1px solid #aaa;'}; width and height are fluid meaning whatever container we place this in it will fill,
     //alternately you can also add a fixed width / height here to constrain the layout
@@ -95,6 +98,7 @@ var DemoXzibitSelect = createReactClass({
             onClearSearchFilter={this.onClearSearchFilter}
             onDimensionSelectionChange={this.onDimensionSelectionChange}
             onDimensionFilterValueChange={this.onDimensionFilterValueChange}
+            onClearDimensionFilterValue={this.onClearDimensionFilterValue}
             searchFilterValue={this.state.searchFilterValue}
             dimensionFilters={this.state.dimensionFilters}
             filterDimensionOptions={this.filterDimensionOptions()}/>
