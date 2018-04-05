@@ -78,13 +78,14 @@ var XzibitSelect = createReactClass({
   getSearch: function() {
     if (!this.search) {
       this.search = this.makeSearch(this.props.searchFields, this.props.refField)
-      this.fillSearch(this.search, this.props.options)
+      
     }
 
     return this.search
   },
 
   makeSearch: function(searchFields, refField) {
+    var componentThis = this
     var search = lunr(function() {
       var lunrThis = this
       searchFields.forEach(function (field) {
@@ -94,6 +95,8 @@ var XzibitSelect = createReactClass({
       })
 
       lunrThis.ref(refField)
+
+      componentThis.fillSearch(lunrThis, componentThis.props.options)
     })
 
     return search

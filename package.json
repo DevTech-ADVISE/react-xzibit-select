@@ -44,10 +44,10 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "lunr": "^1.0.0",
+    "lunr": "^2.1.6",
     "opentip": "git://github.com/BI/opentip",
     "react-addons-update": "^15.1.0",
-    "react-compact-multiselect": "git+https://github.com/BI/react-compact-multiselect",
+    "react-compact-multiselect": "git://github.com/BI/react-compact-multiselect",
     "react-ismobile-mixin": "git://github.com/BI/react-ismobile-mixin",
     "react-lazy-render": "git+https://github.com/BI/react-lazy-render",
     "react-sizebox": "git+https://github.com/BI/react-sizebox#v0.1",
