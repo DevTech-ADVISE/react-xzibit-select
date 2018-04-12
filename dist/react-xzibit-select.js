@@ -242,10 +242,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }).map(function (result) {
 	      return String(result); // make sure the ref is a string for merging results comparison later
 	    });
-	    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase()).map(function (result) {
+	    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase()).map(function (result) {
 	      return String(result); // make sure the ref is a string for merging results comparison later
 	    });
-	    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase());
 	    var mergedResults = this.mergeResults(lunrResults, substringResults);
 	    var optionMap = {};
 	    this.props.options.forEach(function (opt) {
