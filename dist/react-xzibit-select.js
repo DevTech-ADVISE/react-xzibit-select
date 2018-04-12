@@ -136,13 +136,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  getSearch: function () {
 	    if (!this.search) {
 	      this.search = this.makeSearch(this.props.searchFields, this.props.refField);
-	      this.fillSearch(this.search, this.props.options);
 	    }
 
 	    return this.search;
 	  },
 
 	  makeSearch: function (searchFields, refField) {
+	    var componentThis = this;
 	    var search = lunr(function () {
 	      var lunrThis = this;
 	      searchFields.forEach(function (field) {
@@ -152,6 +152,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 
 	      lunrThis.ref(refField);
+
+	      componentThis.fillSearch(lunrThis, componentThis.props.options);
 	    });
 
 	    return search;
@@ -175,7 +177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.getAvailableOptions(this.props.options).filter(function (opt) {
 	      var foundValue = false;
 	      for (var i = 0; i < this.props.searchFields.length; i++) {
-	        var fieldValue = opt[this.props.searchFields[i]];
+	        var fieldValue = opt[this.props.searchFields[i]].toLowerCase();
 	        // If the searchInput exists in the fieldValue
 	        // break and keep this option in the list
 	        if (fieldValue.indexOf(searchInput) > -1) {
@@ -237,6 +239,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var lunrResults = this.getSearch().search(searchFilterValue.toLowerCase()).map(function (result) {
 	      return result.ref;
+	    }).map(function (result) {
+	      return String(result); // make sure the ref is a string for merging results comparison later
+	    });
+	    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase()).map(function (result) {
+	      return String(result); // make sure the ref is a string for merging results comparison later
 	    });
 	    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase());
 	    var mergedResults = this.mergeResults(lunrResults, substringResults);
