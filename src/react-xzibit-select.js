@@ -78,13 +78,14 @@ var XzibitSelect = createReactClass({
   getSearch: function() {
     if (!this.search) {
       this.search = this.makeSearch(this.props.searchFields, this.props.refField)
-      this.fillSearch(this.search, this.props.options)
+      
     }
 
     return this.search
   },
 
   makeSearch: function(searchFields, refField) {
+    var componentThis = this
     var search = lunr(function() {
       var lunrThis = this
       searchFields.forEach(function (field) {
@@ -94,6 +95,8 @@ var XzibitSelect = createReactClass({
       })
 
       lunrThis.ref(refField)
+      
+      componentThis.fillSearch(lunrThis, componentThis.props.options)
     })
 
     return search
@@ -117,7 +120,7 @@ var XzibitSelect = createReactClass({
     return this.getAvailableOptions(this.props.options).filter(function(opt) {
       var foundValue = false
       for(var i = 0; i < this.props.searchFields.length; i ++){
-        var fieldValue = opt[this.props.searchFields[i]]
+        var fieldValue = opt[this.props.searchFields[i]].toLowerCase()
         // If the searchInput exists in the fieldValue
         // break and keep this option in the list
         if(fieldValue.indexOf(searchInput) > -1) {
@@ -177,8 +180,12 @@ var XzibitSelect = createReactClass({
     var lunrResults = this.getSearch().search(this.state.labelFilter.toLowerCase())
       .map(function(result) {
         return result.ref
+      }).map(function(result) {
+        return String(result) // make sure the ref is a string for merging results comparison later
       })
-    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase())
+    var substringResults = this.subStringSearch(this.state.labelFilter.toLowerCase()).map(function(result) {
+      return String(result) // make sure the ref is a string for merging results comparison later
+    })
     var mergedResults = this.mergeResults(lunrResults, substringResults)
     var optionMap = {}
     this.props.options.forEach(function (opt) {
