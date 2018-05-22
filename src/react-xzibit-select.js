@@ -16,7 +16,7 @@ var XzibitSelect = createReactClass({
     return {
       mobileTooltipContent: null,
       mobileTooltipTitle: null,
-      searchIndex: this.generateSearchIndex(this.props.searchFields, this.props.refField)
+      searchIndex: this.generateSearchIndex(this.props.searchFields, this.props.refField, this.props.options, this.props.values, this.props.dimensionFilters)
     };
   },
 
@@ -63,19 +63,25 @@ var XzibitSelect = createReactClass({
       searchFields: ['label']
     };
   },
+  componentWillReceiveProps: function(nextProps) {
 
-  componentDidUpdate: function(prevProps, prevState) {
-
-    // If the component is updating because we just updated the search index, set the haveJustUpdatedSearchIndex flag back to false to indicate that it has not just been updated
-    if(this.state.haveJustUpdatedSearchIndex) {
-      this.setState({ haveJustUpdatedSearchIndex: false })
-    } else if(!this.state.haveJustUpdatedSearchIndex && !prevState.haveJustUpdatedSearchIndex && prevProps.searchFilterValue === this.props.searchFilterValue) {
-      // If we have not currently just updated the search index, and have not previously updated the search index, and also if the props/update is occurring for a reason other than the searchFilterValue changing(example updates that should update the search index include: adding/removing option selections, adding/removing dimension selections, and other prop changes like new options) We do not want to check for new options though because doing a deep comparison on possibly thousands of objects will not be performant
-      this.updateSearchIndex()
+    if(nextProps.searchFilterValue === this.props.searchFilterValue) {
+      this.updateSearchIndex(nextProps)
     }
   },
+
+  // componentDidUpdate: function(prevProps, prevState) {
+
+  //   // If the component is updating because we just updated the search index, set the haveJustUpdatedSearchIndex flag back to false to indicate that it has not just been updated
+  //   if(this.state.haveJustUpdatedSearchIndex) {
+  //     this.setState({ haveJustUpdatedSearchIndex: false })
+  //   } else if(!this.state.haveJustUpdatedSearchIndex && !prevState.haveJustUpdatedSearchIndex && prevProps.searchFilterValue === this.props.searchFilterValue) {
+  //     // If we have not currently just updated the search index, and have not previously updated the search index, and also if the props/update is occurring for a reason other than the searchFilterValue changing(example updates that should update the search index include: adding/removing option selections, adding/removing dimension selections, and other prop changes like new options) We do not want to check for new options though because doing a deep comparison on possibly thousands of objects will not be performant
+  //     this.updateSearchIndex()
+  //   }
+  // },
   
-  generateSearchIndex: function(searchFields, refField) {
+  generateSearchIndex: function(searchFields, refField, data, currentlySelectedValues, currentDimensionFilters) {
     var componentThis = this
     var search = lunr(function() {
       var lunrThis = this
@@ -87,28 +93,28 @@ var XzibitSelect = createReactClass({
 
       lunrThis.ref(refField)
       
-      componentThis.fillSearch(lunrThis, componentThis.props.options)
+      componentThis.fillSearch(lunrThis, data, currentlySelectedValues, currentDimensionFilters)
     })
 
     return search
   },
 
-  getAvailableOptions: function(options) {
+  getAvailableOptions: function(options, currentlySelectedValues, currentDimensionFilters) {
     return options.filter(function (opt) {
-      var isSelected = this.props.values.indexOf(opt.value) !== -1
-      var isInDimension = this.dimensionFilterIncludes(opt)
+      var isSelected = currentlySelectedValues.indexOf(opt.value) !== -1
+      var isInDimension = this.dimensionFilterIncludes(opt, currentDimensionFilters)
       return !isSelected && isInDimension
     }, this)
   },
 
-  fillSearch: function(search, options) {
-    this.getAvailableOptions(options).forEach(function (opt) {
+  fillSearch: function(search, options, currentlySelectedValues, currentDimensionFilters) {
+    this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters).forEach(function (opt) {
       search.add(opt)
     })
   },
 
-  subStringSearch: function (searchInput) {
-    return this.getAvailableOptions(this.props.options).filter(function(opt) {
+  subStringSearch: function (searchInput, options, currentlySelectedValues, currentDimensionFilters) {
+    return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters).filter(function(opt) {
       var foundValue = false
       for(var i = 0; i < this.props.searchFields.length; i ++){
         var fieldValue = opt[this.props.searchFields[i]].toLowerCase()
@@ -142,7 +148,7 @@ var XzibitSelect = createReactClass({
   },
 
   addAllFunc: function() {
-    var filteredOptionValues = this.filteredOptions().map(function(opt){ return opt.value;});
+    var filteredOptionValues = this.filteredOptions(this.props.options, this.props.values, this.props.dimensionFilters).map(function(opt){ return opt.value;});
     var newValueState = filteredOptionValues.concat(this.props.values);
     this.props.onChange(newValueState);
   },
@@ -157,15 +163,15 @@ var XzibitSelect = createReactClass({
     return array1.concat(array2MinusArray1)
   },
 
-  filteredOptions: function() {
+  filteredOptions: function(options, currentlySelectedValues, currentDimensionFilters) {
     var searchFilterValue = this.props.searchFilterValue.toLowerCase()
     if(!searchFilterValue) {
-      return this.getAvailableOptions(this.props.options)
+      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters)
     }
 
     // lunr doesn't filter on a or i
     if(searchFilterValue === 'a' || searchFilterValue === 'i') {
-      return this.getAvailableOptions(this.props.options)
+      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters)
     }
 
     var lunrResults = this.state.searchIndex.search(searchFilterValue.toLowerCase())
@@ -174,7 +180,7 @@ var XzibitSelect = createReactClass({
       }).map(function(result) {
         return String(result) // make sure the ref is a string for merging results comparison later
       })
-    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase()).map(function(result) {
+    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase(), options, currentlySelectedValues, currentDimensionFilters).map(function(result) {
       return String(result) // make sure the ref is a string for merging results comparison later
     })
     var mergedResults = this.mergeResults(lunrResults, substringResults)
@@ -199,8 +205,8 @@ var XzibitSelect = createReactClass({
       this.refs.tooltip.show);
   },
 
-  dimensionFilterIncludes: function(opt) {
-    if (Object.keys(this.props.dimensionFilters).length < 1){
+  dimensionFilterIncludes: function(opt, currentDimensionFilters) {
+    if (Object.keys(currentDimensionFilters).length < 1){
       return true;
     }
 
@@ -208,7 +214,7 @@ var XzibitSelect = createReactClass({
     var filterHits = this.props.filterDimensionOptions.map(function(dimension){
       var key = dimension.key;
       var name = dimension.name;
-      var filterVals = (this.props.dimensionFilters[name]) ? this.props.dimensionFilters[name].selectedValues : undefined
+      var filterVals = (currentDimensionFilters[name]) ? currentDimensionFilters[name].selectedValues : undefined
       if (filterVals === undefined || filterVals.length < 1) {
         return true;
       }
@@ -246,8 +252,8 @@ var XzibitSelect = createReactClass({
     this.props.onClearSearchFilter()
   },
 
-  updateSearchIndex: function() {
-    this.setState({ searchIndex: this.generateSearchIndex(this.props.searchFields, this.props.refField), haveJustUpdatedSearchIndex: true })
+  updateSearchIndex: function(props) {
+    this.setState({ searchIndex: this.generateSearchIndex(props.searchFields, props.refField, props.options, props.values, props.dimensionFilters) })
   },
 
   generateUpdateDimensionSelection: function(dimensionName) {
@@ -332,7 +338,7 @@ var XzibitSelect = createReactClass({
   },
 
   render: function() {
-    var filteredOptions = this.filteredOptions();
+    var filteredOptions = this.filteredOptions(this.props.options, this.props.values, this.props.dimensionFilters);
     var selectFilters = this.getSelectFilters();
     var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
 
