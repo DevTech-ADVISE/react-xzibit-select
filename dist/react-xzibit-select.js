@@ -122,29 +122,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 
-	  blankSearch: function () {
-	    this.search = null;
-	  },
-
 	  componentDidUpdate: function (prevProps, prevState) {
-	    // If the component is updating because of the search value changing, then no need to update the search Index
-	    if (prevProps.searchFilterValue !== this.props.searchFilterValue || this.state.haveJustUpdatedSearchIndex) {
+
+	    // If the component is updating because we just updated the search index, set the haveJustUpdatedSearchIndex flag back to false to indicate that it has not just been updated
+	    if (this.state.haveJustUpdatedSearchIndex) {
 	      this.setState({ haveJustUpdatedSearchIndex: false });
-	    } else if (!this.state.haveJustUpdatedSearchIndex && !prevState.haveJustUpdatedSearchIndex) {
-	      // For any other changes, including change to dimension selections, or option selections, or updated options list, update the search Index, but make sure we have the flag to update
-	      // Also add a condition to make sure we don't do an infinite loop, when setting this.state.haveJustUpdatedSearchIndex back to false, we only want to update if we have not previously just updated
+	    } else if (!this.state.haveJustUpdatedSearchIndex && !prevState.haveJustUpdatedSearchIndex && prevProps.searchFilterValue === this.props.searchFilterValue) {
+	      // If we have not currently just updated the search index, and have not previously updated the search index, and also if the props/update is occurring for a reason other than the searchFilterValue changing(example updates that should update the search index include: adding/removing option selections, adding/removing dimension selections, and other prop changes like new options) We do not want to check for new options though because doing a deep comparison on possibly thousands of objects will not be performant
 	      this.updateSearchIndex();
 	    }
 	  },
-
-	  // getSearch: function() {
-	  //   if (!this.search) {
-	  //     this.search = this.generateSearchIndex(this.props.searchFields, this.props.refField)
-
-	  //   }
-
-	  //   return this.search
-	  // },
 
 	  generateSearchIndex: function (searchFields, refField) {
 	    var componentThis = this;
