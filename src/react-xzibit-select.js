@@ -8,7 +8,9 @@ var TagList = require('react-tag-list');
 var SkyLight = require('react-skylight').default;
 var IsMobileMixin = require('react-ismobile-mixin');
 var lunr = require('lunr')
-
+var _ = require('lodash')
+var ReactDebounceInput = require('react-debounce-input')
+var DebounceInput = ReactDebounceInput.DebounceInput
 require('./react-xzibit-select.scss');
 
 var XzibitSelect = createReactClass({
@@ -27,6 +29,7 @@ var XzibitSelect = createReactClass({
     filterDimensionOptions: types.array,
     dimensionFilters: types.object,
     searchFilterValue: types.string,
+    searchFilterDebounceTime: types.number,
     onDimensionSelectionChange: types.func,
     onDimensionFilterValueChange: types.func,
     onClearDimensionFilterValue: types.func,
@@ -45,6 +48,7 @@ var XzibitSelect = createReactClass({
       filterChangeThrotleMs: 200,
       dimensionFilters: {},
       searchFilterValue: '',
+      searchFilterDebounceTime: 200,
       placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
@@ -63,23 +67,12 @@ var XzibitSelect = createReactClass({
       searchFields: ['label']
     };
   },
-  componentWillReceiveProps: function(nextProps) {
 
+  componentWillReceiveProps: function(nextProps) {
     if(nextProps.searchFilterValue === this.props.searchFilterValue) {
       this.updateSearchIndex(nextProps)
     }
   },
-
-  // componentDidUpdate: function(prevProps, prevState) {
-
-  //   // If the component is updating because we just updated the search index, set the haveJustUpdatedSearchIndex flag back to false to indicate that it has not just been updated
-  //   if(this.state.haveJustUpdatedSearchIndex) {
-  //     this.setState({ haveJustUpdatedSearchIndex: false })
-  //   } else if(!this.state.haveJustUpdatedSearchIndex && !prevState.haveJustUpdatedSearchIndex && prevProps.searchFilterValue === this.props.searchFilterValue) {
-  //     // If we have not currently just updated the search index, and have not previously updated the search index, and also if the props/update is occurring for a reason other than the searchFilterValue changing(example updates that should update the search index include: adding/removing option selections, adding/removing dimension selections, and other prop changes like new options) We do not want to check for new options though because doing a deep comparison on possibly thousands of objects will not be performant
-  //     this.updateSearchIndex()
-  //   }
-  // },
   
   generateSearchIndex: function(searchFields, refField, data, currentlySelectedValues, currentDimensionFilters) {
     var componentThis = this
@@ -243,8 +236,7 @@ var XzibitSelect = createReactClass({
     return retVal;
   },
 
-  updateSearchFilter: function(event) {
-    // TODO: add throttling
+  handleSearchFilterChange: function(event) {
     this.props.onSearchFilterChange(event.target.value)
   },
 
@@ -348,10 +340,12 @@ var XzibitSelect = createReactClass({
           <div className='header'>
             <div className='rxs-label-filter'>
               <div className='rsv-label-filter-container'>
-              <input
-                onChange={this.updateSearchFilter}
+              <DebounceInput
+                debounceTimeout={this.props.searchFilterDebounceTime}
+                onChange={this.handleSearchFilterChange}
                 value={this.props.searchFilterValue}
-                placeholder={this.props.placeholderText} />
+                placeholder={this.props.placeholderText}
+              />
               <button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearSearchFilter}>&#215;</button>
               </div>
             </div>

@@ -33,6 +33,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
+    "react-debounce-input": "^3.2.0",
     "react-dom": "^16.2.0",
     "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1",
