@@ -126,11 +126,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 
-	  // componentWillReceiveProps: function(nextProps) {
-	  //   if(nextProps.searchFilterValue === this.props.searchFilterValue) {
-	  //     this.updateSearchIndex(nextProps)
-	  //   }
-	  // },
+	  componentWillReceiveProps: function (nextProps) {
+	    if (nextProps.searchFilterValue !== this.props.searchFilterValue) {
+	      this.setLunrResults(nextProps.searchFilterValue);
+	    }
+	  },
 
 	  generateSearchIndex: function (searchFields, refField, data, currentlySelectedValues, currentDimensionFilters) {
 	    var componentThis = this;
@@ -220,6 +220,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return array1.concat(array2MinusArray1);
 	  },
 
+	  setLunrResults: function (searchFilterValue) {
+	    // search using the lunr search index
+	    var lunrResults = this.state.searchIndex.search(searchFilterValue.toLowerCase()).map(function (result) {
+	      return result.ref;
+	    }).map(function (result) {
+	      return String(result); // make sure the ref is a string for merging results comparison later
+	    });
+
+	    this.setState({ lunrResults: lunrResults });
+	  },
+
 	  filteredOptions: function (options, currentlySelectedValues, currentDimensionFilters) {
 	    var searchFilterValue = this.props.searchFilterValue.toLowerCase();
 	    if (!searchFilterValue) {
@@ -231,12 +242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters);
 	    }
 
-	    // search using the lunr search index
-	    var lunrResults = this.state.searchIndex.search(searchFilterValue.toLowerCase()).map(function (result) {
-	      return result.ref;
-	    }).map(function (result) {
-	      return String(result); // make sure the ref is a string for merging results comparison later
-	    });
+	    var lunrResults = this.state.lunrResults || [];
 	    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase(), options, currentlySelectedValues, currentDimensionFilters).map(function (result) {
 	      return String(result); // make sure the ref is a string for merging results comparison later
 	    });
