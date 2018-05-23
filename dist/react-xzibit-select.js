@@ -126,11 +126,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 
-	  componentWillReceiveProps: function (nextProps) {
-	    if (nextProps.searchFilterValue === this.props.searchFilterValue) {
-	      this.updateSearchIndex(nextProps);
-	    }
-	  },
+	  // componentWillReceiveProps: function(nextProps) {
+	  //   if(nextProps.searchFilterValue === this.props.searchFilterValue) {
+	  //     this.updateSearchIndex(nextProps)
+	  //   }
+	  // },
 
 	  generateSearchIndex: function (searchFields, refField, data, currentlySelectedValues, currentDimensionFilters) {
 	    var componentThis = this;
@@ -159,7 +159,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  fillSearch: function (search, options, currentlySelectedValues, currentDimensionFilters) {
-	    this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters).forEach(function (opt) {
+	    // Note that we fill the search index with all of the options, later on if there are less available options, then
+	    // we must remove those options from search results after the search is done.
+	    // This is a performance improvement, originally we would recreate the search index on every component update(eg. adding/removing options), which takes a long time for a large number of options
+	    options.forEach(function (opt) {
 	      search.add(opt);
 	    });
 	  },
@@ -228,6 +231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters);
 	    }
 
+	    // search using the lunr search index
 	    var lunrResults = this.state.searchIndex.search(searchFilterValue.toLowerCase()).map(function (result) {
 	      return result.ref;
 	    }).map(function (result) {
@@ -242,10 +246,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var ref = opt[this.props.refField];
 	      optionMap[ref] = opt;
 	    }, this);
-
-	    return mergedResults.map(function (resultRef) {
+	    var lunrResultsAsOptions = mergedResults.map(function (resultRef) {
 	      return optionMap[resultRef];
 	    });
+	    var onlyAvailableResultsOptions = this.getAvailableOptions(lunrResultsAsOptions, currentlySelectedValues, currentDimensionFilters);
+
+	    return onlyAvailableResultsOptions;
 	  },
 
 	  onMobileTooltip: function (title, content) {
