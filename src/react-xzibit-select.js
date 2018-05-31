@@ -8,14 +8,17 @@ var TagList = require('react-tag-list');
 var SkyLight = require('react-skylight').default;
 var IsMobileMixin = require('react-ismobile-mixin');
 var lunr = require('lunr')
-
+var _ = require('lodash')
+var ReactDebounceInput = require('react-debounce-input')
+var DebounceInput = ReactDebounceInput.DebounceInput
 require('./react-xzibit-select.scss');
 
 var XzibitSelect = createReactClass({
   getInitialState: function() {
     return {
       mobileTooltipContent: null,
-      mobileTooltipTitle: null
+      mobileTooltipTitle: null,
+      searchIndex: this.generateSearchIndex(this.props.searchFields, this.props.refField, this.props.options, this.props.values, this.props.dimensionFilters)
     };
   },
 
@@ -26,6 +29,7 @@ var XzibitSelect = createReactClass({
     filterDimensionOptions: types.array,
     dimensionFilters: types.object,
     searchFilterValue: types.string,
+    searchFilterDebounceTime: types.number,
     onDimensionSelectionChange: types.func,
     onDimensionFilterValueChange: types.func,
     onClearDimensionFilterValue: types.func,
@@ -44,6 +48,7 @@ var XzibitSelect = createReactClass({
       filterChangeThrotleMs: 200,
       dimensionFilters: {},
       searchFilterValue: '',
+      searchFilterDebounceTime: 200,
       placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
@@ -62,29 +67,14 @@ var XzibitSelect = createReactClass({
       searchFields: ['label']
     };
   },
-
-  componentWillMount: function() {
-    this.blankSearch()
-  },
-
-  componentWillReceiveProps: function() {
-    this.blankSearch()
-  },
-
-  blankSearch: function() {
-    this.search = null
-  },
-
-  getSearch: function() {
-    if (!this.search) {
-      this.search = this.makeSearch(this.props.searchFields, this.props.refField)
-      
+  
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.searchFilterValue !== this.props.searchFilterValue) {
+      this.setLunrResults(nextProps.searchFilterValue)
     }
-
-    return this.search
   },
 
-  makeSearch: function(searchFields, refField) {
+  generateSearchIndex: function(searchFields, refField, data, currentlySelectedValues, currentDimensionFilters) {
     var componentThis = this
     var search = lunr(function() {
       var lunrThis = this
@@ -96,28 +86,31 @@ var XzibitSelect = createReactClass({
 
       lunrThis.ref(refField)
       
-      componentThis.fillSearch(lunrThis, componentThis.props.options)
+      componentThis.fillSearch(lunrThis, data, currentlySelectedValues, currentDimensionFilters)
     })
 
     return search
   },
 
-  getAvailableOptions: function(options) {
+  getAvailableOptions: function(options, currentlySelectedValues, currentDimensionFilters) {
     return options.filter(function (opt) {
-      var isSelected = this.props.values.indexOf(opt.value) !== -1
-      var isInDimension = this.dimensionFilterIncludes(opt)
+      var isSelected = currentlySelectedValues.indexOf(opt.value) !== -1
+      var isInDimension = this.dimensionFilterIncludes(opt, currentDimensionFilters)
       return !isSelected && isInDimension
     }, this)
   },
 
-  fillSearch: function(search, options) {
-    this.getAvailableOptions(options).forEach(function (opt) {
+  fillSearch: function(search, options, currentlySelectedValues, currentDimensionFilters) {
+    // Note that we fill the search index with all of the options, later on if there are less available options, then
+    // we must remove those options from search results after the search is done.
+    // This is a performance improvement, originally we would recreate the search index on every component update(eg. adding/removing options), which takes a long time for a large number of options
+    options.forEach(function (opt) {
       search.add(opt)
     })
   },
 
-  subStringSearch: function (searchInput) {
-    return this.getAvailableOptions(this.props.options).filter(function(opt) {
+  subStringSearch: function (searchInput, options, currentlySelectedValues, currentDimensionFilters) {
+    return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters).filter(function(opt) {
       var foundValue = false
       for(var i = 0; i < this.props.searchFields.length; i ++){
         var fieldValue = opt[this.props.searchFields[i]].toLowerCase()
@@ -151,7 +144,7 @@ var XzibitSelect = createReactClass({
   },
 
   addAllFunc: function() {
-    var filteredOptionValues = this.filteredOptions().map(function(opt){ return opt.value;});
+    var filteredOptionValues = this.filteredOptions(this.props.options, this.props.values, this.props.dimensionFilters).map(function(opt){ return opt.value;});
     var newValueState = filteredOptionValues.concat(this.props.values);
     this.props.onChange(newValueState);
   },
@@ -166,24 +159,31 @@ var XzibitSelect = createReactClass({
     return array1.concat(array2MinusArray1)
   },
 
-  filteredOptions: function() {
+  setLunrResults: function(searchFilterValue) {
+    // search using the lunr search index
+    var lunrResults = this.state.searchIndex.search(searchFilterValue.toLowerCase())
+    .map(function(result) {
+      return result.ref
+    }).map(function(result) {
+      return String(result) // make sure the ref is a string for merging results comparison later
+    })
+
+    this.setState({ lunrResults: lunrResults })
+  },
+
+  filteredOptions: function(options, currentlySelectedValues, currentDimensionFilters) {
     var searchFilterValue = this.props.searchFilterValue.toLowerCase()
     if(!searchFilterValue) {
-      return this.getAvailableOptions(this.props.options)
+      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters)
     }
 
     // lunr doesn't filter on a or i
     if(searchFilterValue === 'a' || searchFilterValue === 'i') {
-      return this.getAvailableOptions(this.props.options)
+      return this.getAvailableOptions(options, currentlySelectedValues, currentDimensionFilters)
     }
 
-    var lunrResults = this.getSearch().search(searchFilterValue.toLowerCase())
-      .map(function(result) {
-        return result.ref
-      }).map(function(result) {
-        return String(result) // make sure the ref is a string for merging results comparison later
-      })
-    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase()).map(function(result) {
+    var lunrResults = this.state.lunrResults || []
+    var substringResults = this.subStringSearch(searchFilterValue.toLowerCase(), options, currentlySelectedValues, currentDimensionFilters).map(function(result) {
       return String(result) // make sure the ref is a string for merging results comparison later
     })
     var mergedResults = this.mergeResults(lunrResults, substringResults)
@@ -192,10 +192,12 @@ var XzibitSelect = createReactClass({
       var ref = opt[this.props.refField]
       optionMap[ref] = opt
     }, this)
-
-    return mergedResults.map(function(resultRef) {
+    var lunrResultsAsOptions = mergedResults.map(function(resultRef) {
       return optionMap[resultRef]
     })
+    var onlyAvailableResultsOptions = this.getAvailableOptions(lunrResultsAsOptions, currentlySelectedValues, currentDimensionFilters)
+
+    return onlyAvailableResultsOptions
   },
 
   onMobileTooltip: function(title, content) {
@@ -208,8 +210,8 @@ var XzibitSelect = createReactClass({
       this.refs.tooltip.show);
   },
 
-  dimensionFilterIncludes: function(opt) {
-    if (Object.keys(this.props.dimensionFilters).length < 1){
+  dimensionFilterIncludes: function(opt, currentDimensionFilters) {
+    if (Object.keys(currentDimensionFilters).length < 1){
       return true;
     }
 
@@ -217,7 +219,7 @@ var XzibitSelect = createReactClass({
     var filterHits = this.props.filterDimensionOptions.map(function(dimension){
       var key = dimension.key;
       var name = dimension.name;
-      var filterVals = (this.props.dimensionFilters[name]) ? this.props.dimensionFilters[name].selectedValues : undefined
+      var filterVals = (currentDimensionFilters[name]) ? currentDimensionFilters[name].selectedValues : undefined
       if (filterVals === undefined || filterVals.length < 1) {
         return true;
       }
@@ -246,8 +248,7 @@ var XzibitSelect = createReactClass({
     return retVal;
   },
 
-  updateSearchFilter: function(event) {
-    // TODO: add throttling
+  handleSearchFilterChange: function(event) {
     this.props.onSearchFilterChange(event.target.value)
   },
 
@@ -255,12 +256,17 @@ var XzibitSelect = createReactClass({
     this.props.onClearSearchFilter()
   },
 
+  updateSearchIndex: function(props) {
+    this.setState({ searchIndex: this.generateSearchIndex(props.searchFields, props.refField, props.options, props.values, props.dimensionFilters) })
+  },
+
   generateUpdateDimensionSelection: function(dimensionName) {
+    // Re-generate the search index any time a dimension selection is made so that the index correctly
+    // corresponds to the new list of options filtered by the dimension selection
     /**
      *  {'Source' : [], 'Sector' : []}
      */
     return function(values) {
-      this.blankSearch();
       this.props.onDimensionSelectionChange(dimensionName, values)
     }.bind(this);
   },
@@ -336,7 +342,7 @@ var XzibitSelect = createReactClass({
   },
 
   render: function() {
-    var filteredOptions = this.filteredOptions();
+    var filteredOptions = this.filteredOptions(this.props.options, this.props.values, this.props.dimensionFilters);
     var selectFilters = this.getSelectFilters();
     var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
 
@@ -346,10 +352,12 @@ var XzibitSelect = createReactClass({
           <div className='header'>
             <div className='rxs-label-filter'>
               <div className='rsv-label-filter-container'>
-              <input
-                onChange={this.updateSearchFilter}
+              <DebounceInput
+                debounceTimeout={this.props.searchFilterDebounceTime}
+                onChange={this.handleSearchFilterChange}
                 value={this.props.searchFilterValue}
-                placeholder={this.props.placeholderText} />
+                placeholder={this.props.placeholderText}
+              />
               <button className='rxs-label-filter-clear' name='clear-filter' onClick={this.clearSearchFilter}>&#215;</button>
               </div>
             </div>
