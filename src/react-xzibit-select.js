@@ -67,7 +67,7 @@ var XzibitSelect = createReactClass({
       searchFields: ['label']
     };
   },
-  
+
   componentWillReceiveProps: function(nextProps) {
     if(nextProps.searchFilterValue !== this.props.searchFilterValue) {
       this.setLunrResults(nextProps.searchFilterValue)
@@ -85,7 +85,7 @@ var XzibitSelect = createReactClass({
       })
 
       lunrThis.ref(refField)
-      
+
       componentThis.fillSearch(lunrThis, data, currentlySelectedValues, currentDimensionFilters)
     })
 
@@ -373,7 +373,8 @@ var XzibitSelect = createReactClass({
             onClick={this.addValue}
             addAll={addAll}
             addAllFunc={this.addAllFunc}
-            onMobileTooltip={this.onMobileTooltip}/>
+            onMobileTooltip={this.onMobileTooltip}
+            openTipOptions={this.props.openTipOptions}/>
           <div className='footer'>
             <div className='filter-multiselect'>
             {selectFilters}

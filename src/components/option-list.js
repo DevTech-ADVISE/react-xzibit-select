@@ -44,7 +44,8 @@ var OptionList = createReactClass({
         label={label}
         toolTipContent={toolTipContent}
         toolTipTitle={toolTipTitle}
-        onMobileTooltip={this.props.onMobileTooltip}/>
+        onMobileTooltip={this.props.onMobileTooltip}
+        openTipOptions={this.props.openTipOptions} />
     );
 
   },
