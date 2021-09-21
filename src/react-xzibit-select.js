@@ -434,7 +434,6 @@ var XzibitSelect = createReactClass({
   },
 
   render: function () {
-    console.log("React Select");
 
     var filteredOptions = this.filteredOptions(
       this.props.options,
@@ -450,7 +449,7 @@ var XzibitSelect = createReactClass({
       );
 
     return (
-      <div className="react-xzibit-select">
+      <div className="react-xzibit-select active-child">
         <div className="fluid-layout">
           <div className="header">
             <div className="rxs-label-filter">
