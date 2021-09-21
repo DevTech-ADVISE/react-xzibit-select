@@ -434,8 +434,6 @@ var XzibitSelect = createReactClass({
   },
 
   render: function () {
-    console.log("Render Select");
-    console.log(this.props);
 
     var filteredOptions = this.filteredOptions(
       this.props.options,
