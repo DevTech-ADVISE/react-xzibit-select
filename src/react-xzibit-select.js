@@ -1,17 +1,17 @@
-var React = require("react");
-var createReactClass = require("create-react-class");
-var update = require("react-addons-update");
-var types = require("prop-types");
-var OptionList = require("./components/option-list");
-var ReactCompactMultiselect = require("react-compact-multiselect");
-var TagList = require("react-tag-list");
-var SkyLight = require("react-skylight").default;
-var IsMobileMixin = require("react-ismobile-mixin");
-var lunr = require("lunr");
-var _ = require("lodash");
-var ReactDebounceInput = require("react-debounce-input");
+var React = require('react');
+var createReactClass = require('create-react-class');
+var update = require('react-addons-update');
+var types = require('prop-types');
+var OptionList = require('./components/option-list');
+var ReactCompactMultiselect = require('react-compact-multiselect');
+var TagList = require('react-tag-list');
+var SkyLight = require('react-skylight').default;
+var IsMobileMixin = require('react-ismobile-mixin');
+var lunr = require('lunr');
+var _ = require('lodash');
+var ReactDebounceInput = require('react-debounce-input');
 var DebounceInput = ReactDebounceInput.DebounceInput;
-require("./react-xzibit-select.scss");
+require('./react-xzibit-select.scss');
 
 var XzibitSelect = createReactClass({
   getInitialState: function () {
@@ -24,7 +24,7 @@ var XzibitSelect = createReactClass({
         this.props.options,
         this.props.values,
         this.props.dimensionFilters
-      ),
+      )
     };
   },
 
@@ -44,7 +44,7 @@ var XzibitSelect = createReactClass({
     optionsByValue: types.any,
     refField: types.string,
     searchFields: types.array,
-    values: types.array,
+    values: types.array
   },
 
   mixins: [IsMobileMixin],
@@ -54,24 +54,24 @@ var XzibitSelect = createReactClass({
       addAll: true,
       filterChangeThrotleMs: 200,
       dimensionFilters: {},
-      searchFilterValue: "",
+      searchFilterValue: '',
       searchFilterDebounceTime: 200,
-      placeholderText: "Type here to filter options",
+      placeholderText: 'Type here to filter options',
       openTipOptions: {
         offset: [3, 10],
         borderRadius: 2,
-        borderColor: "#333333",
-        background: "#333333",
-        className: "rxs-tooltip",
+        borderColor: '#333333',
+        background: '#333333',
+        className: 'rxs-tooltip',
         delay: 0,
         hideDelay: 0,
         showEffectDuration: 0,
         hideEffectDuration: 0,
-        tipJoint: "top left",
-        stem: false,
+        tipJoint: 'top left',
+        stem: false
       },
-      refField: "value",
-      searchFields: ["label"],
+      refField: 'value',
+      searchFields: ['label']
     };
   },
 
@@ -238,7 +238,7 @@ var XzibitSelect = createReactClass({
     }
 
     // lunr doesn't filter on a or i
-    if (searchFilterValue === "a" || searchFilterValue === "i") {
+    if (searchFilterValue === 'a' || searchFilterValue === 'i') {
       return this.getAvailableOptions(
         options,
         currentlySelectedValues,
@@ -343,7 +343,7 @@ var XzibitSelect = createReactClass({
         props.options,
         props.values,
         props.dimensionFilters
-      ),
+      )
     });
   },
 
@@ -406,12 +406,12 @@ var XzibitSelect = createReactClass({
 
   getSelectFilters: function () {
     return this.props.filterDimensionOptions.map(function (dim) {
-      var groupByKey = "";
+      var groupByKey = '';
       if (dim.groupByKey) groupByKey = dim.groupByKey;
 
       const dimensionFilter = this.props.dimensionFilters[dim.name] || {};
       const selectedValuesForDimension = dimensionFilter.selectedValues || [];
-      const filterValueForDimension = dimensionFilter.filterValue || "";
+      const filterValueForDimension = dimensionFilter.filterValue || '';
 
       return (
         <ReactCompactMultiselect
@@ -491,7 +491,7 @@ var XzibitSelect = createReactClass({
         {this.getSkylight()}
       </div>
     );
-  },
+  }
 });
 
 module.exports = XzibitSelect;

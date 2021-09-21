@@ -1,10 +1,10 @@
-var React = require("react");
-var createReactClass = require("create-react-class");
-var types = require("prop-types");
-var OptionListItem = require("./option-list-item");
-var LazyRender = require("react-lazy-render");
-var ReactSizeBox = require("react-sizebox");
-var classes = require("classnames");
+var React = require('react');
+var createReactClass = require('create-react-class');
+var types = require('prop-types');
+var OptionListItem = require('./option-list-item');
+var LazyRender = require('react-lazy-render');
+var ReactSizeBox = require('react-sizebox');
+var classes = require('classnames');
 
 var OptionList = createReactClass({
   propTypes: {
@@ -12,7 +12,7 @@ var OptionList = createReactClass({
     onClick: types.func,
     addAll: types.bool,
     addAllFunc: types.func,
-    openTipOptions: types.object,
+    openTipOptions: types.object
   },
   buildOption: function (opt, index) {
     if (opt.addAll) {
@@ -27,8 +27,8 @@ var OptionList = createReactClass({
       );
     }
 
-    var toolTipContent = "",
-      toolTipTitle = "",
+    var toolTipContent = '',
+      toolTipTitle = '',
       label;
     if (opt.toolTipContent) toolTipContent = String(opt.toolTipContent);
     if (opt.toolTipTitle) toolTipTitle = String(opt.toolTipTitle);
@@ -36,8 +36,8 @@ var OptionList = createReactClass({
     else label = opt.label;
 
     var className = classes({
-      "rxs-item-even": index % 2 === 0,
-      "rxs-item-odd": index % 2 === 1,
+      'rxs-item-even': index % 2 === 0,
+      'rxs-item-odd': index % 2 === 1
     });
 
     return (
@@ -73,7 +73,7 @@ var OptionList = createReactClass({
         </ReactSizeBox>
       </div>
     );
-  },
+  }
 });
 
 module.exports = OptionList;

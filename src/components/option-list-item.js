@@ -23,7 +23,7 @@ var OptionListItem = createReactClass({
     if(component === null || this.tooltip || this.isMobile()) {
       return;
     }
-
+    console.log('testing targetted commit package pulling.')
     this.tooltip = new Opentip(component, this.props.toolTipContent, this.props.toolTipTitle, this.props.openTipOptions);
   },
   componentDidUpdate: function() {
