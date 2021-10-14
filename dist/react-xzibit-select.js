@@ -411,7 +411,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return React.createElement(
 	      'div',
-	      { className: 'react-xzibit-select active-child' },
+	      { className: 'react-xzibit-select' },
 	      React.createElement(
 	        'div',
 	        { className: 'fluid-layout' },
