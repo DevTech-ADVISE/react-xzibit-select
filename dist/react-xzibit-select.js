@@ -91,6 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    onDimensionSelectionChange: types.func,
 	    onDimensionFilterValueChange: types.func,
 	    onClearDimensionFilterValue: types.func,
+	    openTipOptions: types.object,
 	    options: types.array,
 	    optionsByValue: types.any,
 	    refField: types.string,
@@ -315,7 +316,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  updateSearchIndex: function (props) {
-	    this.setState({ searchIndex: this.generateSearchIndex(props.searchFields, props.refField, props.options, props.values, props.dimensionFilters) });
+	    this.setState({
+	      searchIndex: this.generateSearchIndex(props.searchFields, props.refField, props.options, props.values, props.dimensionFilters)
+	    });
 	  },
 
 	  generateUpdateDimensionSelection: function (dimensionName) {
@@ -369,7 +372,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      {
 	        ref: 'tooltip',
 	        title: this.state.mobileTooltipTitle,
-	        className: 'mobile-tooltip' },
+	        className: 'mobile-tooltip'
+	      },
 	      this.state.mobileTooltipContent
 	    );
 	  },
@@ -394,11 +398,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onFilterValueChange: this.generateUpdateDimensionFilterValue(dim.name),
 	        onClearFilter: this.generateClearDimensionFilterValue(dim.name),
 	        groupBy: groupByKey,
-	        layoutMode: ReactCompactMultiselect.ALIGN_CONTENT_NE });
+	        layoutMode: ReactCompactMultiselect.ALIGN_CONTENT_NE
+	      });
 	    }, this);
 	  },
 
 	  render: function () {
+
 	    var filteredOptions = this.filteredOptions(this.props.options, this.props.values, this.props.dimensionFilters);
 	    var selectFilters = this.getSelectFilters();
 	    var addAll = this.props.addAll && !(this.props.addAllLimit && filteredOptions.length > this.props.addAllLimit);
@@ -426,7 +432,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	              }),
 	              React.createElement(
 	                'button',
-	                { className: 'rxs-label-filter-clear', name: 'clear-filter', onClick: this.clearSearchFilter },
+	                {
+	                  className: 'rxs-label-filter-clear',
+	                  name: 'clear-filter',
+	                  onClick: this.clearSearchFilter
+	                },
 	                '\xD7'
 	              )
 	            )
@@ -436,14 +446,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onRemove: this.removeValue,
 	            removeAll: this.removeAll,
 	            placeholderText: '\xA0',
-	            collapsedRows: 1 })
+	            collapsedRows: 1
+	          })
 	        ),
 	        React.createElement(OptionList, {
 	          options: filteredOptions,
 	          onClick: this.addValue,
 	          addAll: addAll,
 	          addAllFunc: this.addAllFunc,
-	          onMobileTooltip: this.onMobileTooltip }),
+	          onMobileTooltip: this.onMobileTooltip,
+	          openTipOptions: this.props.openTipOptions
+	        }),
 	        React.createElement(
 	          'div',
 	          { className: 'footer' },
@@ -2668,7 +2681,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    options: types.array,
 	    onClick: types.func,
 	    addAll: types.bool,
-	    addAllFunc: types.func
+	    addAllFunc: types.func,
+	    openTipOptions: types.object
 	  },
 	  buildOption: function (opt, index) {
 	    if (opt.addAll) {
@@ -2676,8 +2690,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'Add All',
 	        addAll: this.props.addAll,
 	        onClick: this.props.addAllFunc,
-	        value: 'Add All',
-	        label: 'Add All' });
+	        value: "Add All",
+	        label: 'Add All'
+	      });
 	    }
 
 	    var toolTipContent = '',
@@ -2687,7 +2702,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (opt.toolTipTitle) toolTipTitle = String(opt.toolTipTitle);
 	    if (opt.labelComponent) label = opt.labelComponent;else label = opt.label;
 
-	    var className = classes({ 'rxs-item-even': index % 2 === 0, 'rxs-item-odd': index % 2 === 1 });
+	    var className = classes({
+	      'rxs-item-even': index % 2 === 0,
+	      'rxs-item-odd': index % 2 === 1
+	    });
 
 	    return React.createElement(OptionListItem, {
 	      className: className,
@@ -2697,7 +2715,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      label: label,
 	      toolTipContent: toolTipContent,
 	      toolTipTitle: toolTipTitle,
-	      onMobileTooltip: this.props.onMobileTooltip });
+	      onMobileTooltip: this.props.onMobileTooltip,
+	      openTipOptions: this.props.openTipOptions
+	    });
 	  },
 	  render: function () {
 	    if (this.props.addAll) {
@@ -2716,7 +2736,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            className: 'rxs-option-list rsx-lazyRender',
 	            generatorData: this.props.options,
 	            generatorFunction: this.buildOption,
-	            maxHeight: 400 },
+	            maxHeight: 400
+	          },
 	          React.createElement(
 	            'li',
 	            null,
@@ -2761,7 +2782,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (component === null || this.tooltip || this.isMobile()) {
 	      return;
 	    }
-
 	    this.tooltip = new Opentip(component, this.props.toolTipContent, this.props.toolTipTitle, this.props.openTipOptions);
 	  },
 	  componentDidUpdate: function () {
@@ -2860,8 +2880,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../css-loader/index.js!../../sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/andrewblowe/Projects/usaid/react-xzibit-select/node_modules!./opentip.css", function() {
-				var newContent = require("!!../../css-loader/index.js!../../sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/andrewblowe/Projects/usaid/react-xzibit-select/node_modules!./opentip.css");
+			module.hot.accept("!!../../css-loader/index.js!../../sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/gujo/Repositories/BI/react-xzibit-select/node_modules!./opentip.css", function() {
+				var newContent = require("!!../../css-loader/index.js!../../sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/gujo/Repositories/BI/react-xzibit-select/node_modules!./opentip.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23059,8 +23079,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/andrewblowe/Projects/usaid/react-xzibit-select/node_modules!./react-xzibit-select.scss", function() {
-				var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/andrewblowe/Projects/usaid/react-xzibit-select/node_modules!./react-xzibit-select.scss");
+			module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/gujo/Repositories/BI/react-xzibit-select/node_modules!./react-xzibit-select.scss", function() {
+				var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/sass-loader/index.js?outputStyle=expanded&includePaths[]=/Users/gujo/Repositories/BI/react-xzibit-select/node_modules!./react-xzibit-select.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
