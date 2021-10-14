@@ -449,7 +449,7 @@ var XzibitSelect = createReactClass({
       );
 
     return (
-      <div className="react-xzibit-select active-child">
+      <div className="react-xzibit-select">
         <div className="fluid-layout">
           <div className="header">
             <div className="rxs-label-filter">
