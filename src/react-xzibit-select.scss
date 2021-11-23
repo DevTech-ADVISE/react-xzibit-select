@@ -40,7 +40,9 @@ html, body, #main {height:100%;margin:0;}
 
       &.rsx-SizeBox {
         overflow: hidden; //overflow added to child
-        display: table-cell;
+        display: block;
+        width: 100%;
+        min-height: 400px;
       }
     }
   }
@@ -239,6 +241,11 @@ html, body, #main {height:100%;margin:0;}
       margin: 5px 4px;
 
       &.add-all {
+
+        width: 100%;
+        display: block;
+        height: 40px;
+        
         .rxs-option-button {
           background-color: rgb(135, 218, 135);
         }
