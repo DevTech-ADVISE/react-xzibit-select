@@ -46,13 +46,13 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "lunr": "^1.0.0",
-    "opentip": "git://github.com/BI/opentip",
+    "opentip": "git+ssh://git@github.com:DevTech-ADVISE/opentip",
     "react-addons-update": "^15.1.0",
-    "react-compact-multiselect": "git://github.com/BI/react-compact-multiselect",
-    "react-ismobile-mixin": "git://github.com/BI/react-ismobile-mixin",
-    "react-lazy-render": "git+https://github.com/BI/react-lazy-render",
-    "react-sizebox": "git+https://github.com/BI/react-sizebox#v0.1",
+    "react-compact-multiselect": "git+ssh://git@github.com:DevTech-ADVISE/react-compact-multiselect",
+    "react-ismobile-mixin": "git+ssh://git@github.com:DevTech-ADVISE/react-ismobile-mixin",
+    "react-lazy-render": "git+ssh://git@github.com:DevTech-ADVISE/react-lazy-render",
+    "react-sizebox": "git+ssh://git@github.com:DevTech-ADVISE/react-sizebox#v0.1",
     "react-skylight": "^0.4.0",
-    "react-tag-list": "git+https://github.com/BI/react-tag-list"
+    "react-tag-list": "git+ssh://git@github.com:DevTech-ADVISE/react-tag-list"
   }
 }
